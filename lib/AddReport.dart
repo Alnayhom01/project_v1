@@ -12,6 +12,7 @@ class Addreport extends StatefulWidget {
 
 class _AddreportState extends State<Addreport> {
   @override
+  
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(backgroundColor: Color(0xff32b94b)),
@@ -19,9 +20,7 @@ class _AddreportState extends State<Addreport> {
         textDirection: TextDirection.rtl,
         child: Drawer(
           width: 330,
-
           backgroundColor: Colors.transparent,
-
           child: Container(
             decoration: BoxDecoration(
               color: const Color(0xD94A5052),
@@ -111,8 +110,6 @@ class _AddreportState extends State<Addreport> {
 
                       onTap: () {
                         Navigator.pop(context);
-
-                        // تسجيل الخروج
                       },
                     ),
                   ],
