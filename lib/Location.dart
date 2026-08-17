@@ -17,10 +17,7 @@ class _LocationState extends State<Location> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('اختيار الموقع'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('اختيار الموقع'), centerTitle: true),
 
       body: Stack(
         children: [
@@ -45,11 +42,7 @@ class _LocationState extends State<Location> {
 
           // الدبوس في منتصف الشاشة
           const Center(
-            child: Icon(
-              Icons.location_pin,
-              size: 50,
-              color: Colors.red,
-            ),
+            child: Icon(Icons.location_pin, size: 50, color: Colors.red),
           ),
 
           // زر موقعي الحالي
@@ -78,17 +71,16 @@ class _LocationState extends State<Location> {
   }
 
   Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // التأكد من تشغيل خدمة الموقع
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (!serviceEnabled) {
       await Geolocator.openLocationSettings();
       return;
     }
 
-    permission = await Geolocator.checkPermission();
+    // التأكد من الصلاحيات
+    LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -99,25 +91,56 @@ class _LocationState extends State<Location> {
     }
 
     if (permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
       return;
     }
 
-    Position position = await Geolocator.getCurrentPosition();
+    // ==========================================
+    // 1. نأخذ آخر موقع معروف فورًا
+    // ==========================================
 
-    final newLocation = LatLng(
-      position.latitude,
-      position.longitude,
-    );
+    final lastPosition = await Geolocator.getLastKnownPosition();
 
-    selectedLocation = newLocation;
+    if (lastPosition != null) {
+      final lastLocation = LatLng(
+        lastPosition.latitude,
+        lastPosition.longitude,
+      );
 
-    mapController?.animateCamera(
-      CameraUpdate.newLatLngZoom(
-        newLocation,
-        17,
-      ),
-    );
+      setState(() {
+        selectedLocation = lastLocation;
+      });
 
-    setState(() {});
+      mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(lastLocation, 17),
+      );
+    }
+
+    // ==========================================
+    // 2. بعدها نطلب الموقع الحالي الأدق
+    // ==========================================
+
+    try {
+      final currentPosition = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      final currentLocation = LatLng(
+        currentPosition.latitude,
+        currentPosition.longitude,
+      );
+
+      setState(() {
+        selectedLocation = currentLocation;
+      });
+
+      mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(currentLocation, 17),
+      );
+    } catch (e) {
+      debugPrint('Location error: $e');
+    }
   }
 }

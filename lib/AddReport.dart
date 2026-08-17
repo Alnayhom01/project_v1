@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:project_v1/Location.dart';
 import 'package:project_v1/MyReport.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Addreport extends StatefulWidget {
   const Addreport({super.key});
@@ -14,6 +15,9 @@ class Addreport extends StatefulWidget {
 
 class _AddreportState extends State<Addreport> {
   LatLng? selectedLocation = null;
+  String? selectedReportType;
+  final TextEditingController notesController = TextEditingController();
+  List<XFile> selectedImages = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,7 +178,7 @@ class _AddreportState extends State<Addreport> {
                     child: DropdownButton<String>(
                       isExpanded: true,
                       alignment: AlignmentGeometry.centerRight,
-                      value: null,
+                      value: selectedReportType,
                       hint: Text(
                         'اختر نوع المشكلة',
                         style: TextStyle(fontSize: 25),
@@ -209,7 +213,11 @@ class _AddreportState extends State<Addreport> {
                         ),
                       ],
 
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() {
+                          selectedReportType = value;
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -278,7 +286,8 @@ class _AddreportState extends State<Addreport> {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: const Color(0xffaaaaaa)),
                   ),
-                  child: const TextField(
+                  child: TextField(
+                    controller: notesController,
                     textDirection: TextDirection.rtl,
                     textAlign: TextAlign.right,
                     maxLines: 4,
@@ -320,8 +329,65 @@ class _AddreportState extends State<Addreport> {
                         ),
                       ),
                       child: InkWell(
-                        onTap: () {
-                          // اختيار صورة
+                        onTap: () async {
+                          final picker = ImagePicker();
+
+                          final source =
+                              await showModalBottomSheet<ImageSource>(
+                                context: context,
+                                builder: (context) {
+                                  return SafeArea(
+                                    child: Wrap(
+                                      children: [
+                                        ListTile(
+                                          leading: const Icon(Icons.camera_alt),
+                                          title: const Text('الكاميرا'),
+                                          onTap: () {
+                                            Navigator.pop(
+                                              context,
+                                              ImageSource.camera,
+                                            );
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: const Icon(
+                                            Icons.photo_library,
+                                          ),
+                                          title: const Text('الاستوديو'),
+                                          onTap: () {
+                                            Navigator.pop(
+                                              context,
+                                              ImageSource.gallery,
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+
+                          if (source == null) return;
+
+                          if (source == ImageSource.camera) {
+                            final image = await picker.pickImage(
+                              source: ImageSource.camera,
+                            );
+
+                            if (image != null) {
+                              setState(() {
+                                selectedImages.add(image);
+                              });
+                            }
+                          } else {
+                            final images = await picker.pickMultiImage();
+
+                            if (images.isNotEmpty) {
+                              setState(() {
+                                selectedImages.addAll(images);
+                              });
+                            }
+                          }
                         },
                         borderRadius: BorderRadius.circular(12),
                         child: const Column(
@@ -362,7 +428,11 @@ class _AddreportState extends State<Addreport> {
                 SizedBox(
                   height: 62,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      print(selectedReportType);
+                      print(selectedLocation);
+                      print(notesController.text);
+                    },
 
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff32b94b),
