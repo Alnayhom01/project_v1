@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:project_v1/EditReport.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:project_v1/Location.dart';
+import 'package:project_v1/MyReport.dart';
 
 class Addreport extends StatefulWidget {
   const Addreport({super.key});
@@ -9,8 +13,8 @@ class Addreport extends StatefulWidget {
 }
 
 class _AddreportState extends State<Addreport> {
+  LatLng? selectedLocation = null;
   @override
-  
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(backgroundColor: Color(0xff32b94b)),
@@ -72,9 +76,12 @@ class _AddreportState extends State<Addreport> {
                       icon: Icons.mail_outline,
                       title: 'بلاغاتي المرسلة',
                       onTap: () {
-                        Navigator.pop(context);
-
-                        // الانتقال إلى صفحة بلاغاتي
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MyReport(),
+                          ),
+                        );
                       },
                     ),
 
@@ -207,7 +214,7 @@ class _AddreportState extends State<Addreport> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
 
                 // =========================
                 // الموقع
@@ -221,31 +228,37 @@ class _AddreportState extends State<Addreport> {
                 const SizedBox(height: 7),
 
                 // الخريطة
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox(
-                    height: 205,
-                    width: double.infinity,
-                    child: Image.network(
-                      'https://pngimg.com/uploads/google_maps_pin/google_maps_pin_PNG61.png',
-                      fit: BoxFit.scaleDown,
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    final location = await Navigator.push<LatLng>(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Location()),
+                    );
 
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: const Color(0xffd9e8ef),
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.map,
-                            size: 70,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
-                    ),
+                    if (location != null) {
+                      setState(() {
+                        selectedLocation = location;
+                      });
+                    }
+                  },
+                  icon: const Icon(Icons.location_on),
+                  label: const Text(
+                    'اختيار الموقع',
+                    style: TextStyle(fontSize: 18),
                   ),
                 ),
 
-                const SizedBox(height: 18),
+                SizedBox(height: 20),
+
+                if (selectedLocation != null)
+                  Text(
+                    "تم اختيار الموقع ✅",
+                    style: TextStyle(fontSize: 20),
+                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.rtl,
+                  ),
+
+                const SizedBox(height: 30),
 
                 // =========================
                 // الملاحظات
@@ -338,7 +351,6 @@ class _AddreportState extends State<Addreport> {
                     const SizedBox(width: 10),
 
                     // زر +
-                    
                   ],
                 ),
 
