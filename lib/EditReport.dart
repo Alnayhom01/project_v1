@@ -11,7 +11,7 @@ class Editreport extends StatefulWidget {
 class _EditreportState extends State<Editreport> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: const Color(0xFFDDF4FC),
       appBar: AppBar(backgroundColor: Color(0xff32b94b)),
       endDrawer: Directionality(
         textDirection: TextDirection.rtl,

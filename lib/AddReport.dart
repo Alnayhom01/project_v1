@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project_v1/EditReport.dart';
-import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:project_v1/Location.dart';
 import 'package:project_v1/MyReport.dart';
@@ -20,7 +19,7 @@ class _AddreportState extends State<Addreport> {
   List<XFile> selectedImages = [];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: const Color(0xFFDDF4FC),
       appBar: AppBar(backgroundColor: Color(0xff32b94b)),
       endDrawer: Directionality(
         textDirection: TextDirection.rtl,

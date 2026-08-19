@@ -11,7 +11,7 @@ class MyReport extends StatefulWidget {
 class _MyReportState extends State<MyReport> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: const Color(0xFFDDF4FC),
         
     );
   }
