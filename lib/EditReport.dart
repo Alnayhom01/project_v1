@@ -11,7 +11,8 @@ class Editreport extends StatefulWidget {
 class _EditreportState extends State<Editreport> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: const Color(0xFFDDF4FC),
+    return Scaffold(
+      backgroundColor: const Color(0xFFDDF4FC),
       appBar: AppBar(backgroundColor: Color(0xff32b94b)),
       endDrawer: Directionality(
         textDirection: TextDirection.rtl,
@@ -81,7 +82,7 @@ class _EditreportState extends State<Editreport> {
                       icon: Icons.home_outlined,
                       title: 'الرئيسية',
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const Addreport(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_v1/EditReport.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:project_v1/Location.dart';
+import 'package:project_v1/LogIn.dart';
 import 'package:project_v1/MyReport.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -117,7 +118,10 @@ class _AddreportState extends State<Addreport> {
                       title: 'تسجيل الخروج',
 
                       onTap: () {
-                        Navigator.pop(context);
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LogIn()));
                       },
                     ),
                   ],
