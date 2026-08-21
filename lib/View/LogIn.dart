@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:project_v1/Location.dart';
-import 'package:project_v1/OtpPage.dart';
+import 'package:get/get.dart';
+import 'package:project_v1/View/AddReport.dart';
+import 'package:project_v1/View/SignUp.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+class LogIn extends StatefulWidget {
+  const LogIn({super.key});
 
   @override
-  State<SignUp> createState() => _SignUpState();
+  State<LogIn> createState() => _LogInState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,17 +19,17 @@ class _SignUpState extends State<SignUp> {
         textDirection: TextDirection.rtl,
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 45),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 25),
+                const SizedBox(height: 45),
 
                 // =========================
                 // العنوان
                 // =========================
                 const Text(
-                  'إنشاء حساب',
+                  'تسجيل الدخول',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 30,
@@ -40,53 +41,12 @@ class _SignUpState extends State<SignUp> {
                 const SizedBox(height: 12),
 
                 const Text(
-                  'أنشئ حسابك للبدء في استخدام التطبيق',
+                  'أدخل رقم الهاتف وكلمة السر للدخول إلى حسابك',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Color(0xff666666)),
+                  style: TextStyle(fontSize: 16, color: Color(0xff555555)),
                 ),
 
-                const SizedBox(height: 40),
-
-                // =========================
-                // الاسم
-                // =========================
-                const Text(
-                  'الاسم',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-
-                const SizedBox(height: 8),
-
-                Container(
-                  height: 62,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(13),
-                    border: Border.all(color: const Color(0xffaaaaaa)),
-                  ),
-                  child: const TextField(
-                    textAlign: TextAlign.right,
-                    decoration: InputDecoration(
-                      hintText: 'أدخل اسمك',
-                      hintStyle: TextStyle(
-                        color: Color(0xff888888),
-                        fontSize: 17,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.person_outline,
-                        color: Color(0xff71858d),
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 18,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 25),
+                const SizedBox(height: 55),
 
                 // =========================
                 // رقم الهاتف
@@ -94,7 +54,7 @@ class _SignUpState extends State<SignUp> {
                 const Text(
                   'رقم الهاتف',
                   textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 8),
@@ -106,21 +66,24 @@ class _SignUpState extends State<SignUp> {
                     borderRadius: BorderRadius.circular(13),
                     border: Border.all(color: const Color(0xffaaaaaa)),
                   ),
-                  child: const TextField(
-                    textDirection: TextDirection.ltr,
-                    textAlign: TextAlign.left,
+                  child: TextField(
                     keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
+                    textAlign: TextAlign.right,
+
+                    decoration: const InputDecoration(
                       hintText: 'أدخل رقم الهاتف',
                       hintStyle: TextStyle(
                         color: Color(0xff888888),
                         fontSize: 17,
                       ),
+
                       prefixIcon: Icon(
                         Icons.phone_outlined,
                         color: Color(0xff71858d),
                       ),
+
                       border: InputBorder.none,
+
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 15,
                         vertical: 18,
@@ -137,7 +100,7 @@ class _SignUpState extends State<SignUp> {
                 const Text(
                   'كلمة السر',
                   textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 8),
@@ -149,20 +112,24 @@ class _SignUpState extends State<SignUp> {
                     borderRadius: BorderRadius.circular(13),
                     border: Border.all(color: const Color(0xffaaaaaa)),
                   ),
-                  child: const TextField(
+                  child: TextField(
                     obscureText: true,
                     textAlign: TextAlign.right,
-                    decoration: InputDecoration(
+
+                    decoration: const InputDecoration(
                       hintText: 'أدخل كلمة السر',
                       hintStyle: TextStyle(
                         color: Color(0xff888888),
                         fontSize: 17,
                       ),
+
                       prefixIcon: Icon(
                         Icons.lock_outline,
                         color: Color(0xff71858d),
                       ),
+
                       border: InputBorder.none,
+
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 15,
                         vertical: 18,
@@ -171,76 +138,52 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 12),
 
                 // =========================
-                // تحديد الموقع
+                // نسيت كلمة السر
                 // =========================
-                const Text(
-                  'الموقع',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-
-                const SizedBox(height: 8),
-
-                SizedBox(
-                  height: 62,
-                  child: ElevatedButton.icon(
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Location(),
-                        ),
-                      );
+                      // نسيت كلمة السر
                     },
-                    icon: const Icon(Icons.location_on_outlined, size: 26),
-                    label: const Text(
-                      'حدد موقعك',
+                    child: const Text(
+                      'نسيت كلمة السر؟',
                       style: TextStyle(
-                        fontSize: 18,
+                        color: Color(0xff279C45),
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xff279C45),
-                      elevation: 0,
-                      side: const BorderSide(color: Color(0xffaaaaaa)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13),
                       ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 35),
+                const SizedBox(height: 30),
 
                 // =========================
-                // زر إنشاء الحساب
+                // زر تسجيل الدخول
                 // =========================
                 SizedBox(
                   height: 62,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const OtpPage(),
-                        ),
-                      );
+                      Get.off(Addreport());
                     },
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff32B94B),
                       foregroundColor: Colors.white,
                       elevation: 0,
+
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(13),
                       ),
                     ),
+
                     child: const Text(
-                      'إنشاء الحساب',
+                      'تسجيل الدخول',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -249,23 +192,25 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
 
-                const SizedBox(height: 15),
+                const SizedBox(height: 25),
 
+                // =========================
+                // إنشاء حساب
                 // =========================
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      ' لديك حساب؟',
+                      'ليس لديك حساب؟',
                       style: TextStyle(fontSize: 16, color: Color(0xff555555)),
                     ),
 
                     TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Get.to(SignUp());
                       },
                       child: const Text(
-                        'تسجيل دخول',
+                        'إنشاء حساب',
                         style: TextStyle(
                           fontSize: 16,
                           color: Color(0xff279C45),

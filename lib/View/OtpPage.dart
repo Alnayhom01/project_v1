@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project_v1/AddReport.dart';
+import 'package:get/get.dart';
+import 'package:project_v1/View/AddReport.dart';
 
 class OtpPage extends StatefulWidget {
   const OtpPage({super.key});
@@ -125,12 +126,7 @@ class _OtpPageState extends State<OtpPage> {
                   height: 62,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Addreport(),
-                        ),
-                      );
+                      Get.off(Addreport());
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff32B94B),
@@ -154,7 +150,7 @@ class _OtpPageState extends State<OtpPage> {
 
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child: const Text(
                     'العودة',

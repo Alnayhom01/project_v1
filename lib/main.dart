@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 //import 'package:project_v1/AddReport.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:project_v1/LogIn.dart';
+import 'package:project_v1/View/LogIn.dart';
 import 'firebase_options.dart';
+import 'package:get/get.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(fontFamily: 'NotoSansArabic'),
       debugShowCheckedModeBanner: false,
       home: const LogIn(),

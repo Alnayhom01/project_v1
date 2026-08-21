@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -62,7 +63,7 @@ class _LocationState extends State<Location> {
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'confirmLocation',
         onPressed: () {
-          Navigator.pop(context, selectedLocation);
+          Get.back(result: selectedLocation);
         },
         label: const Text('تأكيد الموقع'),
         icon: const Icon(Icons.check),

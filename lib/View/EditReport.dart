@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project_v1/AddReport.dart';
+import 'package:get/get.dart';
+import 'package:project_v1/View/AddReport.dart';
 
 class Editreport extends StatefulWidget {
   const Editreport({super.key});
@@ -47,7 +48,7 @@ class _EditreportState extends State<Editreport> {
                       alignment: Alignment.topLeft,
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);
+                          Get.back();
                         },
 
                         child: Container(
@@ -82,12 +83,7 @@ class _EditreportState extends State<Editreport> {
                       icon: Icons.home_outlined,
                       title: 'الرئيسية',
                       onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Addreport(),
-                          ),
-                        );
+                        Get.off(Addreport());
                       },
                     ),
 
@@ -100,9 +96,7 @@ class _EditreportState extends State<Editreport> {
                       icon: Icons.mail_outline,
                       title: 'بلاغاتي المرسلة',
                       onTap: () {
-                        Navigator.pop(context);
-
-                        // الانتقال إلى صفحة بلاغاتي
+                        Get.back();
                       },
                     ),
 
@@ -120,9 +114,7 @@ class _EditreportState extends State<Editreport> {
                       title: 'تسجيل الخروج',
 
                       onTap: () {
-                        Navigator.pop(context);
-
-                        // تسجيل الخروج
+                        Get.back();
                       },
                     ),
                   ],
@@ -289,7 +281,7 @@ class _EditreportState extends State<Editreport> {
                   SizedBox(
                     height: 60,
                     child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Get.back(),
                       child: const Text(
                         'إلغاء',
                         style: TextStyle(fontSize: 20),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:project_v1/EditReport.dart';
+import 'package:get/route_manager.dart';
+import 'package:get/utils.dart';
+import 'package:project_v1/View/EditReport.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:project_v1/Location.dart';
-import 'package:project_v1/LogIn.dart';
-import 'package:project_v1/MyReport.dart';
+import 'package:project_v1/View/Location.dart';
+import 'package:project_v1/View/LogIn.dart';
+import 'package:project_v1/View/MyReport.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Addreport extends StatefulWidget {
@@ -20,7 +22,8 @@ class _AddreportState extends State<Addreport> {
   List<XFile> selectedImages = [];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: const Color(0xFFDDF4FC),
+    return Scaffold(
+      backgroundColor: const Color(0xFFDDF4FC),
       appBar: AppBar(backgroundColor: Color(0xff32b94b)),
       endDrawer: Directionality(
         textDirection: TextDirection.rtl,
@@ -50,7 +53,7 @@ class _AddreportState extends State<Addreport> {
                       alignment: Alignment.topLeft,
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);
+                          Get.back();
                         },
 
                         child: Container(
@@ -80,12 +83,7 @@ class _AddreportState extends State<Addreport> {
                       icon: Icons.mail_outline,
                       title: 'بلاغاتي المرسلة',
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MyReport(),
-                          ),
-                        );
+                        Get.to(MyReport());
                       },
                     ),
 
@@ -99,12 +97,7 @@ class _AddreportState extends State<Addreport> {
                       title: 'تعديل بلاغ',
 
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Editreport(),
-                          ),
-                        );
+                        Get.to(Editreport());
                       },
                     ),
 
@@ -118,10 +111,7 @@ class _AddreportState extends State<Addreport> {
                       title: 'تسجيل الخروج',
 
                       onTap: () {
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LogIn()));
+                        Get.to(LogIn());
                       },
                     ),
                   ],
@@ -241,9 +231,8 @@ class _AddreportState extends State<Addreport> {
                 // الخريطة
                 ElevatedButton.icon(
                   onPressed: () async {
-                    final location = await Navigator.push<LatLng>(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Location()),
+                    final location = await Get.to<LatLng>(
+                      () => const Location(),
                     );
 
                     if (location != null) {
@@ -343,24 +332,32 @@ class _AddreportState extends State<Addreport> {
                                     child: Wrap(
                                       children: [
                                         ListTile(
-                                          leading: const Icon(Icons.camera_alt),
-                                          title: const Text('الكاميرا'),
+                                          leading: const Icon(
+                                            Icons.camera_alt,
+                                            size: 28,
+                                          ),
+                                          title: const Text(
+                                            'الكاميرا',
+                                            style: TextStyle(fontSize: 25),
+                                          ),
                                           onTap: () {
-                                            Navigator.pop(
-                                              context,
-                                              ImageSource.camera,
+                                            Get.back(
+                                              result: ImageSource.camera,
                                             );
                                           },
                                         ),
                                         ListTile(
                                           leading: const Icon(
                                             Icons.photo_library,
+                                            size: 28,
                                           ),
-                                          title: const Text('الاستوديو'),
+                                          title: const Text(
+                                            'الاستوديو',
+                                            style: TextStyle(fontSize: 25),
+                                          ),
                                           onTap: () {
-                                            Navigator.pop(
-                                              context,
-                                              ImageSource.gallery,
+                                            Get.back(
+                                              result: ImageSource.gallery,
                                             );
                                           },
                                         ),
