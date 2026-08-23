@@ -170,31 +170,83 @@ class SignUp extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                SizedBox(
-                  height: 62,
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      final location = await Get.toNamed(AppRoutes.location);
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(13),
+                    onTap: () async {
+                      final location =
+                          await Get.toNamed(AppRoutes.location);
 
                       if (location != null) {
                         controller.setLocation(location);
                       }
                     },
-                    icon: const Icon(Icons.location_on_outlined, size: 26),
-                    label: const Text(
-                      'حدد موقعك',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xff279C45),
-                      elevation: 0,
-                      side: const BorderSide(color: Color(0xffaaaaaa)),
-                      shape: RoundedRectangleBorder(
+                    child: Container(
+                      height: 58,
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(13),
+                        border: Border.all(
+                          color: controller.selectedLocation != null
+                              ? const Color(0xff32b94b)
+                              : const Color(0xffaaaaaa),
+                          width: controller.selectedLocation != null ? 1.3 : 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            controller.selectedLocation != null
+                                ? Icons.check_circle_outline_rounded
+                                : Icons.location_on_outlined,
+                            color: const Color(0xff32b94b),
+                            size: 25,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              controller.selectedLocation != null
+                                  ? 'تم تحديد موقعك'
+                                  : 'حدد موقعك',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: controller.selectedLocation != null
+                                    ? const Color(0xff32b94b)
+                                    : Colors.black87,
+                              ),
+                            ),
+                          ),
+                          if (controller.selectedLocation != null)
+                            IconButton(
+                              onPressed: () async {
+                                final location =
+                                    await Get.toNamed(AppRoutes.location);
+                                if (location != null) {
+                                  controller.setLocation(location);
+                                }
+                              },
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 38,
+                                minHeight: 38,
+                              ),
+                              icon: const Icon(
+                                Icons.edit_outlined,
+                                size: 21,
+                                color: Color(0xff32b94b),
+                              ),
+                            )
+                          else
+                            const Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 15,
+                              color: Colors.black45,
+                            ),
+                        ],
                       ),
                     ),
                   ),

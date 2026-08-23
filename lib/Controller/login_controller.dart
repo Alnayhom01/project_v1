@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +16,26 @@ class LoginController extends GetxController {
     final password = passwordController.value;
 
     if (phone.isEmpty || password.isEmpty) {
-      Get.snackbar('تنبيه', 'أدخل رقم الهاتف وكلمة المرور');
+      Get.snackbar(
+        'تنبيه',
+        'أدخل رقم الهاتف وكلمة المرور',
+        titleText: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Text(
+            'تنبيه',
+            textAlign: TextAlign.right,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
+          ),
+        ),
+        messageText: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Text(
+            'أدخل رقم الهاتف وكلمة المرور',
+            textAlign: TextAlign.right,
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
+          ),
+        ),
+      );
       return false;
     }
 
@@ -30,21 +50,78 @@ class LoginController extends GetxController {
           .get();
 
       if (!doc.exists) {
-        Get.snackbar('خطأ', 'رقم الهاتف غير مسجل');
+        Get.snackbar(
+          'خطأ',
+          'رقم الهاتف غير مسجل',
+          titleText: const Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(
+              'خطأ',
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
+            ),
+          ),
+          messageText: const Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(
+              'رقم الهاتف غير مسجل',
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
+            ),
+          ),
+        );
         return false;
       }
 
       final data = doc.data();
 
       if (data == null) {
-        Get.snackbar('خطأ', 'تعذر قراءة بيانات الحساب');
+        Get.snackbar(
+          'خطأ',
+          'تعذر قراءة بيانات الحساب',
+          titleText: const Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(
+              'خطأ',
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
+            ),
+          ),
+          messageText: const Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(
+              'تعذر قراءة بيانات الحساب',
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
+            ),
+          ),
+        );
         return false;
       }
 
       final savedPasswordHash = data['passwordHash'];
 
       if (savedPasswordHash != passwordHash) {
-        Get.snackbar('خطأ', 'رقم الهاتف أو كلمة المرور غير صحيحة');
+        Get.snackbar(
+          'خطأ',
+          'رقم الهاتف أو كلمة المرور غير صحيحة',
+          titleText: const Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(
+              'خطأ',
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
+            ),
+          ),
+          messageText: const Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(
+              'رقم الهاتف أو كلمة المرور غير صحيحة',
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
+            ),
+          ),
+        );
         return false;
       }
 
@@ -55,7 +132,26 @@ class LoginController extends GetxController {
 
       return true;
     } catch (e) {
-      Get.snackbar('خطأ', 'تعذر الاتصال بقاعدة البيانات');
+      Get.snackbar(
+        'خطأ',
+        'تعذر الاتصال بقاعدة البيانات',
+        titleText: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Text(
+            'خطأ',
+            textAlign: TextAlign.right,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
+          ),
+        ),
+        messageText: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Text(
+            'تعذر الاتصال بقاعدة البيانات',
+            textAlign: TextAlign.right,
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
+          ),
+        ),
+      );
       return false;
     } finally {
       isLoading.value = false;

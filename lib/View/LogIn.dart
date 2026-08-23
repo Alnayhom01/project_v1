@@ -213,7 +213,7 @@ class LogIn extends StatelessWidget {
 
                     TextButton(
                       onPressed: () {
-                        Get.toNamed(AppRoutes.signup);
+                        Get.offAll(AppRoutes.signup);
                       },
                       child: const Text(
                         'إنشاء حساب',
