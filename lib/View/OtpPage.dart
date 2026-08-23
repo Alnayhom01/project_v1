@@ -1,37 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:project_v1/View/AddReport.dart';
+import 'package:project_v1/Controller/otp_controller.dart';
+import 'package:project_v1/Routes/app_routes.dart';
 
-class OtpPage extends StatefulWidget {
+class OtpPage extends StatelessWidget {
   const OtpPage({super.key});
 
   @override
-  State<OtpPage> createState() => _OtpPageState();
-}
-
-class _OtpPageState extends State<OtpPage> {
-  final List<TextEditingController> otpControllers = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
-
-  final List<FocusNode> otpFocusNodes = List.generate(6, (_) => FocusNode());
-
-  @override
-  void dispose() {
-    for (final controller in otpControllers) {
-      controller.dispose();
-    }
-
-    for (final node in otpFocusNodes) {
-      node.dispose();
-    }
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.find<OtpController>();
     return Scaffold(
       backgroundColor: const Color(0xFFDDF4FC),
 
@@ -109,7 +86,9 @@ class _OtpPageState extends State<OtpPage> {
                 const SizedBox(height: 5),
 
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await Get.find<OtpController>().resendOtp();
+                  },
                   child: const Text(
                     'إعادة إرسال الرمز',
                     style: TextStyle(
@@ -122,26 +101,44 @@ class _OtpPageState extends State<OtpPage> {
 
                 const SizedBox(height: 30),
 
-                SizedBox(
-                  height: 62,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.off(Addreport());
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff32B94B),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13),
+                Obx(
+                  () => SizedBox(
+                    height: 62,
+                    child: ElevatedButton(
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () async {
+                              final success = await controller.verify();
+
+                              if (success) {
+                                Get.offAllNamed(AppRoutes.addReport);
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff32B94B),
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: const Color(0xff9fd9aa),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(13),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'تحقق',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      child: controller.isLoading.value
+                          ? const SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              'تحقق',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),
@@ -174,8 +171,8 @@ class _OtpPageState extends State<OtpPage> {
       width: 45,
       height: 55,
       child: TextField(
-        controller: otpControllers[index],
-        focusNode: otpFocusNodes[index],
+        controller: Get.find<OtpController>().otpControllers[index],
+        focusNode: Get.find<OtpController>().otpFocusNodes[index],
 
         textDirection: TextDirection.ltr,
         textAlign: TextAlign.center,
@@ -186,13 +183,8 @@ class _OtpPageState extends State<OtpPage> {
         style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
 
         onChanged: (value) {
-          if (value.isNotEmpty && index < 5) {
-            otpFocusNodes[index + 1].requestFocus();
-          }
-
-          if (value.isEmpty && index > 0) {
-            otpFocusNodes[index - 1].requestFocus();
-          }
+          final controller = Get.find<OtpController>();
+          controller.onOtpChanged(index, value);
         },
 
         decoration: InputDecoration(

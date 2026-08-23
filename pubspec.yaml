@@ -44,8 +44,12 @@ dependencies:
   firebase_auth: ^6.5.7
   google_sign_in: ^7.2.0
   get: ^4.7.3
-
-
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4
+  http: ^1.6.0
+  dotenv: ^4.2.0
+  crypto: ^3.0.7
+  shared_preferences: ^2.5.5
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:project_v1/View/AddReport.dart';
-import 'package:project_v1/View/SignUp.dart';
+import 'package:project_v1/Controller/login_controller.dart';
+import 'package:project_v1/Routes/app_routes.dart';
 
-class LogIn extends StatefulWidget {
+class LogIn extends StatelessWidget {
   const LogIn({super.key});
 
   @override
-  State<LogIn> createState() => _LogInState();
-}
-
-class _LogInState extends State<LogIn> {
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.find<LoginController>();
     return Scaffold(
       backgroundColor: const Color(0xFFDDF4FC),
       body: Directionality(
@@ -69,7 +65,9 @@ class _LogInState extends State<LogIn> {
                   child: TextField(
                     keyboardType: TextInputType.phone,
                     textAlign: TextAlign.right,
-
+                    onChanged: (value) {
+                      controller.phoneController.value = value;
+                    },
                     decoration: const InputDecoration(
                       hintText: 'أدخل رقم الهاتف',
                       hintStyle: TextStyle(
@@ -115,7 +113,9 @@ class _LogInState extends State<LogIn> {
                   child: TextField(
                     obscureText: true,
                     textAlign: TextAlign.right,
-
+                    onChanged: (value) {
+                      controller.passwordController.value = value;
+                    },
                     decoration: const InputDecoration(
                       hintText: 'أدخل كلمة السر',
                       hintStyle: TextStyle(
@@ -168,8 +168,14 @@ class _LogInState extends State<LogIn> {
                 SizedBox(
                   height: 62,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Get.off(Addreport());
+                    onPressed: () async {
+                      final controller = Get.find<LoginController>();
+
+                      final success = await controller.login();
+
+                      if (success) {
+                        Get.offAllNamed(AppRoutes.addReport);
+                      }
                     },
 
                     style: ElevatedButton.styleFrom(
@@ -207,7 +213,7 @@ class _LogInState extends State<LogIn> {
 
                     TextButton(
                       onPressed: () {
-                        Get.to(SignUp());
+                        Get.toNamed(AppRoutes.signup);
                       },
                       child: const Text(
                         'إنشاء حساب',

@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:project_v1/View/Location.dart';
-import 'package:project_v1/View/OtpPage.dart';
+import 'package:project_v1/Controller/signup_controller.dart';
+import 'package:project_v1/Routes/app_routes.dart';
 
-class SignUp extends StatefulWidget {
+class SignUp extends StatelessWidget {
   const SignUp({super.key});
 
   @override
-  State<SignUp> createState() => _SignUpState();
-}
-
-class _SignUpState extends State<SignUp> {
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.find<SignUpController>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFDDF4FC),
       body: Directionality(
@@ -25,9 +22,6 @@ class _SignUpState extends State<SignUp> {
               children: [
                 const SizedBox(height: 25),
 
-                // =========================
-                // العنوان
-                // =========================
                 const Text(
                   'إنشاء حساب',
                   textAlign: TextAlign.center,
@@ -48,9 +42,6 @@ class _SignUpState extends State<SignUp> {
 
                 const SizedBox(height: 40),
 
-                // =========================
-                // الاسم
-                // =========================
                 const Text(
                   'الاسم',
                   textAlign: TextAlign.right,
@@ -66,9 +57,10 @@ class _SignUpState extends State<SignUp> {
                     borderRadius: BorderRadius.circular(13),
                     border: Border.all(color: const Color(0xffaaaaaa)),
                   ),
-                  child: const TextField(
+                  child: TextField(
                     textAlign: TextAlign.right,
-                    decoration: InputDecoration(
+                    onChanged: controller.setName,
+                    decoration: const InputDecoration(
                       hintText: 'أدخل اسمك',
                       hintStyle: TextStyle(
                         color: Color(0xff888888),
@@ -89,9 +81,6 @@ class _SignUpState extends State<SignUp> {
 
                 const SizedBox(height: 25),
 
-                // =========================
-                // رقم الهاتف
-                // =========================
                 const Text(
                   'رقم الهاتف',
                   textAlign: TextAlign.right,
@@ -107,11 +96,12 @@ class _SignUpState extends State<SignUp> {
                     borderRadius: BorderRadius.circular(13),
                     border: Border.all(color: const Color(0xffaaaaaa)),
                   ),
-                  child: const TextField(
+                  child: TextField(
                     textDirection: TextDirection.ltr,
                     textAlign: TextAlign.left,
+                    onChanged: controller.setPhone,
                     keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'أدخل رقم الهاتف',
                       hintStyle: TextStyle(
                         color: Color(0xff888888),
@@ -132,9 +122,6 @@ class _SignUpState extends State<SignUp> {
 
                 const SizedBox(height: 25),
 
-                // =========================
-                // كلمة السر
-                // =========================
                 const Text(
                   'كلمة السر',
                   textAlign: TextAlign.right,
@@ -150,10 +137,11 @@ class _SignUpState extends State<SignUp> {
                     borderRadius: BorderRadius.circular(13),
                     border: Border.all(color: const Color(0xffaaaaaa)),
                   ),
-                  child: const TextField(
+                  child: TextField(
                     obscureText: true,
                     textAlign: TextAlign.right,
-                    decoration: InputDecoration(
+                    onChanged: controller.setPassword,
+                    decoration: const InputDecoration(
                       hintText: 'أدخل كلمة السر',
                       hintStyle: TextStyle(
                         color: Color(0xff888888),
@@ -174,9 +162,6 @@ class _SignUpState extends State<SignUp> {
 
                 const SizedBox(height: 30),
 
-                // =========================
-                // تحديد الموقع
-                // =========================
                 const Text(
                   'الموقع',
                   textAlign: TextAlign.right,
@@ -188,8 +173,12 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: 62,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      Get.to(Location());
+                    onPressed: () async {
+                      final location = await Get.toNamed(AppRoutes.location);
+
+                      if (location != null) {
+                        controller.setLocation(location);
+                      }
                     },
                     icon: const Icon(Icons.location_on_outlined, size: 26),
                     label: const Text(
@@ -213,14 +202,15 @@ class _SignUpState extends State<SignUp> {
 
                 const SizedBox(height: 35),
 
-                // =========================
-                // زر إنشاء الحساب
-                // =========================
                 SizedBox(
                   height: 62,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Get.off(OtpPage());
+                    onPressed: () async {
+                      final success = await controller.sendOtp();
+
+                      if (success) {
+                        Get.toNamed(AppRoutes.otp);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff32B94B),
@@ -242,7 +232,6 @@ class _SignUpState extends State<SignUp> {
 
                 const SizedBox(height: 15),
 
-                // =========================
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -250,7 +239,6 @@ class _SignUpState extends State<SignUp> {
                       ' لديك حساب؟',
                       style: TextStyle(fontSize: 16, color: Color(0xff555555)),
                     ),
-
                     TextButton(
                       onPressed: () {
                         Get.back();
