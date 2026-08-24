@@ -62,31 +62,55 @@ class LogIn extends StatelessWidget {
                     borderRadius: BorderRadius.circular(13),
                     border: Border.all(color: const Color(0xffaaaaaa)),
                   ),
-                  child: TextField(
-                    keyboardType: TextInputType.phone,
-                    textAlign: TextAlign.right,
-                    onChanged: (value) {
-                      controller.phoneController.value = value;
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'أدخل رقم الهاتف',
-                      hintStyle: TextStyle(
-                        color: Color(0xff888888),
-                        fontSize: 17,
+                  child: Stack(
+                    children: [
+                      TextField(
+                        keyboardType: TextInputType.phone,
+                        textDirection: TextDirection.ltr,
+                        textAlign: TextAlign.left,
+                        onChanged: (value) {
+                          controller.phoneController.value = value;
+                        },
+                        decoration: const InputDecoration(
+                          hintText: '92×××××××',
+                          hintTextDirection: TextDirection.ltr,
+                          hintStyle: TextStyle(
+                            color: Color(0xff888888),
+                            fontSize: 17,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                            left: 105,
+                            right: 15,
+                            top: 18,
+                            bottom: 18,
+                          ),
+                        ),
                       ),
 
-                      prefixIcon: Icon(
-                        Icons.phone_outlined,
-                        color: Color(0xff71858d),
+                      Positioned(
+                        left: 15,
+                        top: 0,
+                        bottom: 0,
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.phone_outlined,
+                              color: Color(0xff71858d),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              '218',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-
-                      border: InputBorder.none,
-
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 18,
-                      ),
-                    ),
+                    ],
                   ),
                 ),
 
@@ -147,7 +171,7 @@ class LogIn extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: TextButton(
                     onPressed: () {
-                      // نسيت كلمة السر
+                      Get.toNamed(AppRoutes.forgotPassword);
                     },
                     child: const Text(
                       'نسيت كلمة السر؟',
@@ -213,7 +237,7 @@ class LogIn extends StatelessWidget {
 
                     TextButton(
                       onPressed: () {
-                        Get.offAll(AppRoutes.signup);
+                        Get.offAllNamed(AppRoutes.signup);
                       },
                       child: const Text(
                         'إنشاء حساب',

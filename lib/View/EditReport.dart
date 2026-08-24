@@ -1,11 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_v1/Controller/edit_report_controller.dart';
 import 'package:project_v1/Routes/app_routes.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:project_v1/Widgets/app_drawer.dart';
 
 class Editreport extends StatelessWidget {
   const Editreport({super.key});
@@ -14,53 +13,73 @@ class Editreport extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFDDF4FC),
-      appBar: AppBar(backgroundColor: const Color(0xff32b94b)),
-      endDrawer: _drawer(),
-      body: GetBuilder<EditReportController>(
-        builder: (c) {
-          if (c.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      endDrawer: const AppDrawer(),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            GetBuilder<EditReportController>(
+              builder: (c) {
+                if (c.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          if (c.reports.isEmpty) {
-            return const Center(
-              child: Text(
-                'لا يوجد بلاغ متاح للتعديل',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            );
-          }
-
-          return SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text(
-                      'تعديل البلاغات',
-                      textAlign: TextAlign.center,
+                if (c.reports.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'لا يوجد بلاغ متاح للتعديل',
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  );
+                }
 
-                    const SizedBox(height: 18),
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'تعديل البلاغات',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
 
-                    _selector(c),
+                        const SizedBox(height: 18),
 
-                    const SizedBox(height: 18),
+                        _selector(c),
 
-                    _form(context, c),
-                  ],
+                        const SizedBox(height: 18),
+
+                        _form(context, c),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            Positioned(
+              top: 18,
+              right: 4,
+              child: Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.menu),
+                  iconSize: 30,
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
                 ),
               ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
@@ -79,9 +98,7 @@ class Editreport extends StatelessWidget {
             'البلاغات المتاحة للتعديل',
             style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
           ),
-
           const SizedBox(height: 10),
-
           ...List.generate(c.reports.length, (i) {
             final d = c.reports[i];
             final selected = i == c.selectedReportIndex.value;
@@ -111,9 +128,7 @@ class Editreport extends StatelessWidget {
                         color: selected ? const Color(0xff32b94b) : Colors.grey,
                         size: 30,
                       ),
-
                       const SizedBox(width: 10),
-
                       Expanded(
                         child: Text(
                           d.type,
@@ -123,7 +138,6 @@ class Editreport extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       Text(
                         '#${d.id.substring(d.id.length > 6 ? d.id.length - 6 : 0)}',
                         style: const TextStyle(color: Colors.grey),
@@ -143,7 +157,6 @@ class Editreport extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // الوقت
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -156,9 +169,7 @@ class Editreport extends StatelessWidget {
                 'الوقت المتبقي للتعديل',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-
               const SizedBox(height: 8),
-
               Text(
                 c.timeText,
                 style: TextStyle(
@@ -173,7 +184,6 @@ class Editreport extends StatelessWidget {
 
         const SizedBox(height: 22),
 
-        // نوع البلاغ
         const Text(
           'نوع البلاغ',
           textAlign: TextAlign.right,
@@ -215,7 +225,6 @@ class Editreport extends StatelessWidget {
 
         const SizedBox(height: 22),
 
-        // الملاحظات
         const Text(
           'الملاحظات',
           textAlign: TextAlign.right,
@@ -238,7 +247,6 @@ class Editreport extends StatelessWidget {
 
         const SizedBox(height: 22),
 
-        // الموقع
         const Text(
           'الموقع',
           textAlign: TextAlign.right,
@@ -332,7 +340,6 @@ class Editreport extends StatelessWidget {
 
         const SizedBox(height: 22),
 
-        // الصور
         const Text(
           'صور البلاغ',
           textAlign: TextAlign.right,
@@ -353,7 +360,6 @@ class Editreport extends StatelessWidget {
 
         const SizedBox(height: 28),
 
-        // حفظ التعديل
         SizedBox(
           height: 60,
           child: ElevatedButton(
@@ -376,7 +382,6 @@ class Editreport extends StatelessWidget {
 
         const SizedBox(height: 10),
 
-        // إلغاء
         SizedBox(
           height: 60,
           child: OutlinedButton(
@@ -447,7 +452,6 @@ class Editreport extends StatelessWidget {
                   Get.back(result: ImageSource.camera);
                 },
               ),
-
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text('الاستوديو'),
@@ -476,107 +480,5 @@ class Editreport extends StatelessWidget {
         c.addImages(images);
       }
     }
-  }
-
-  Drawer _drawer() {
-    return Drawer(
-      width: 330,
-      backgroundColor: Colors.transparent,
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xD94A5052),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(28),
-              bottomLeft: Radius.circular(28),
-            ),
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      onPressed: Get.back,
-                      style: IconButton.styleFrom(
-                        backgroundColor: const Color(0x556B7072),
-                        fixedSize: const Size(48, 48),
-                      ),
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 27,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  _drawerItem(
-                    icon: Icons.home_outlined,
-                    title: 'الرئيسية',
-                    onTap: () {
-                      Get.offAllNamed(AppRoutes.addReport);
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  _drawerItem(
-                    icon: Icons.mail_outline,
-                    title: 'بلاغاتي المرسلة',
-                    onTap: () {
-                      Get.toNamed(AppRoutes.myReport);
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  _drawerItem(
-                    icon: Icons.logout,
-                    title: 'تسجيل الخروج',
-                    onTap: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.remove('isLoggedIn');
-                      await prefs.remove('userPhone');
-                      Get.offAllNamed(AppRoutes.login);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _drawerItem({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.white, size: 30),
-            const SizedBox(width: 18),
-            Expanded(
-              child: Text(
-                title,
-                textAlign: TextAlign.right,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

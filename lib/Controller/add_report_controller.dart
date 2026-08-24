@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:project_v1/Widgets/app_snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:project_v1/Model/report_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -104,72 +105,17 @@ class AddReportController extends GetxController {
 
   Future<void> submitReport() async {
     if (selectedReportType == null || selectedReportType!.trim().isEmpty) {
-      Get.snackbar(
-        'تنبيه',
-        'يرجى اختيار نوع البلاغ',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تنبيه',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'يرجى اختيار نوع البلاغ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show("تنبيه", "يرجى اختيار نوع البلاغ");
+
       return;
     }
     if (selectedLocation == null) {
-      Get.snackbar(
-        'تنبيه',
-        'يرجى اختيار موقع البلاغ',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تنبيه',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'يرجى اختيار موقع البلاغ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show("تنبيه", "يرجى اختيار موقع البلاغ");
+
       return;
     }
     if (selectedImages.isEmpty) {
-      Get.snackbar(
-        'تنبيه',
-        'يرجى إرفاق صورة للبلاغ',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تنبيه',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'يرجى إرفاق صورة للبلاغ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show("تنبيه", "يرجى إرفاق صورة للبلاغ");
       return;
     }
     try {
@@ -177,26 +123,8 @@ class AddReportController extends GetxController {
       final prefs = await SharedPreferences.getInstance();
       final phone = prefs.getString('userPhone');
       if (phone == null || phone.isEmpty) {
-        Get.snackbar(
-          'خطأ',
-          'لم يتم العثور على بيانات المستخدم',
-          titleText: const Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              'خطأ',
-              textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-            ),
-          ),
-          messageText: const Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              'لم يتم العثور على بيانات المستخدم',
-              textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-            ),
-          ),
-        );
+        AppSnackbar.show("خطأ", "لم يتم العثور على بيانات المستخدم");
+
         return;
       }
       final id = 'local_${DateTime.now().microsecondsSinceEpoch}';
@@ -218,49 +146,11 @@ class AddReportController extends GetxController {
       final drafts = _readDrafts(prefs);
       drafts.add({'userPhone': phone, ...draft.toMap()});
       await prefs.setString('pending_reports', jsonEncode(drafts));
-      Get.snackbar(
-        'تم حفظ البلاغ',
-        'يمكنك تعديله لمدة 15 دقيقة',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تم حفظ البلاغ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'يمكنك تعديله لمدة 15 دقيقة',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show("تم حفظ البلاغ", "يمكنك تعديله لمدة 15 دقيقة");
+
       clearReport();
     } catch (e) {
-      Get.snackbar(
-        'خطأ',
-        'تعذر حفظ البلاغ',
-        duration: const Duration(seconds: 5),
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'خطأ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تعذر حفظ البلاغ: $e',
-            textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show("خطأ", "تعذر حفظ البلاغ");
     } finally {
       isLoading.value = false;
     }
@@ -298,8 +188,9 @@ class AddReportController extends GetxController {
           final urls = <String>[];
           for (final path in d.images) {
             final f = File(path);
-            if (await f.exists())
+            if (await f.exists()) {
               urls.add(await uploadImageToCloudinary(XFile(path)));
+            }
           }
           await FirebaseFirestore.instance.collection('reports').doc(d.id).set({
             'userPhone': phone,

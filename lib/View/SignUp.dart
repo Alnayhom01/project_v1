@@ -96,27 +96,53 @@ class SignUp extends StatelessWidget {
                     borderRadius: BorderRadius.circular(13),
                     border: Border.all(color: const Color(0xffaaaaaa)),
                   ),
-                  child: TextField(
-                    textDirection: TextDirection.ltr,
-                    textAlign: TextAlign.left,
-                    onChanged: controller.setPhone,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      hintText: 'أدخل رقم الهاتف',
-                      hintStyle: TextStyle(
-                        color: Color(0xff888888),
-                        fontSize: 17,
+                  child: Stack(
+                    children: [
+                      TextField(
+                        textDirection: TextDirection.ltr,
+                        textAlign: TextAlign.left,
+                        onChanged: controller.setPhone,
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          hintText: '92×××××××',
+                          hintTextDirection: TextDirection.ltr,
+                          hintStyle: TextStyle(
+                            color: Color(0xff888888),
+                            fontSize: 17,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                            left: 105,
+                            right: 15,
+                            top: 18,
+                            bottom: 18,
+                          ),
+                        ),
                       ),
-                      prefixIcon: Icon(
-                        Icons.phone_outlined,
-                        color: Color(0xff71858d),
+
+                      Positioned(
+                        left: 15,
+                        top: 0,
+                        bottom: 0,
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.phone_outlined,
+                              color: Color(0xff71858d),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              '218',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 18,
-                      ),
-                    ),
+                    ],
                   ),
                 ),
 
@@ -175,8 +201,7 @@ class SignUp extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(13),
                     onTap: () async {
-                      final location =
-                          await Get.toNamed(AppRoutes.location);
+                      final location = await Get.toNamed(AppRoutes.location);
 
                       if (location != null) {
                         controller.setLocation(location);
@@ -223,8 +248,9 @@ class SignUp extends StatelessWidget {
                           if (controller.selectedLocation != null)
                             IconButton(
                               onPressed: () async {
-                                final location =
-                                    await Get.toNamed(AppRoutes.location);
+                                final location = await Get.toNamed(
+                                  AppRoutes.location,
+                                );
                                 if (location != null) {
                                   controller.setLocation(location);
                                 }

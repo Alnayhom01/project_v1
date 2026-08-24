@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
+import 'package:project_v1/Widgets/app_snackbar.dart';
+
 class OtpController extends GetxController {
   final otpControllers = List.generate(6, (_) => TextEditingController());
 
@@ -30,26 +32,7 @@ class OtpController extends GetxController {
     final phone = signupController.phoneController.value.trim();
 
     if (phone.isEmpty) {
-      Get.snackbar(
-        'خطأ',
-        'رقم الهاتف غير موجود',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'خطأ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'رقم الهاتف غير موجود',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show('خطأ', 'رقم الهاتف غير موجود');
       return;
     }
 
@@ -64,69 +47,12 @@ class OtpController extends GetxController {
 
       if (response.statusCode == 200) {
         clearOtp();
-        Get.snackbar(
-          'تم الإرسال',
-          'تم إرسال رمز تحقق جديد',
-          titleText: const Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              'تم الإرسال',
-              textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-            ),
-          ),
-          messageText: const Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              'تم إرسال رمز تحقق جديد',
-              textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-            ),
-          ),
-        );
+        AppSnackbar.show('تم الإرسال', 'تم إرسال رمز تحقق جديد');
       } else {
-        Get.snackbar(
-          'خطأ',
-          'فشل إعادة إرسال الرمز',
-          titleText: const Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              'خطأ',
-              textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-            ),
-          ),
-          messageText: const Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              'فشل إعادة إرسال الرمز',
-              textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-            ),
-          ),
-        );
+        AppSnackbar.show('خطأ', 'فشل إعادة إرسال الرمز');
       }
     } catch (e) {
-      Get.snackbar(
-        'خطأ',
-        'تعذر الاتصال بالخادم',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'خطأ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تعذر الاتصال بالخادم',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show('خطأ', 'تعذر الاتصال بالخادم');
     } finally {
       isLoading.value = false;
     }
@@ -134,26 +60,7 @@ class OtpController extends GetxController {
 
   Future<bool> verify() async {
     if (otp.length != 6) {
-      Get.snackbar(
-        'تنبيه',
-        'أدخل رمز التحقق المكون من 6 أرقام',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تنبيه',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'أدخل رمز التحقق المكون من 6 أرقام',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show('تنبيه', 'أدخل رمز التحقق المكون من 6 أرقام');
       return false;
     }
 
@@ -161,26 +68,7 @@ class OtpController extends GetxController {
     final phone = signupController.phoneController.value.trim();
 
     if (phone.isEmpty) {
-      Get.snackbar(
-        'خطأ',
-        'رقم الهاتف غير موجود',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'خطأ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'رقم الهاتف غير موجود',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show('خطأ', 'رقم الهاتف غير موجود');
       return false;
     }
 
@@ -212,71 +100,14 @@ class OtpController extends GetxController {
               'phoneVerified': true,
               'createdAt': FieldValue.serverTimestamp(),
             });
-        Get.snackbar(
-          'تم التحقق',
-          'تم تأكيد رقم الهاتف بنجاح',
-          titleText: const Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              'تم التحقق',
-              textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-            ),
-          ),
-          messageText: const Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              'تم تأكيد رقم الهاتف بنجاح',
-              textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-            ),
-          ),
-        );
+        AppSnackbar.show('تم التحقق', 'تم تأكيد رقم الهاتف بنجاح');
         return true;
       }
 
-      Get.snackbar(
-        'رمز غير صحيح',
-        'رمز التحقق غير صحيح أو منتهي',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'رمز غير صحيح',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'رمز التحقق غير صحيح أو منتهي',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show('رمز غير صحيح', 'رمز التحقق غير صحيح أو منتهي');
       return false;
     } catch (e) {
-      Get.snackbar(
-        'خطأ',
-        'تعذر الاتصال بالخادم',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'خطأ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تعذر الاتصال بالخادم',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show('خطأ', 'تعذر الاتصال بالخادم');
       return false;
     } finally {
       isLoading.value = false;

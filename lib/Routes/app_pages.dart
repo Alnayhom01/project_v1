@@ -13,15 +13,48 @@ import 'package:project_v1/View/LogIn.dart';
 import 'package:project_v1/View/MyReport.dart';
 import 'package:project_v1/View/OtpPage.dart';
 import 'package:project_v1/View/SignUp.dart';
+import 'package:project_v1/View/Alerts.dart';
+import 'package:project_v1/Bindings/forgot_password_binding.dart';
+import 'package:project_v1/View/ForgotPassword.dart';
 
 class AppPages {
   static final pages = <GetPage>[
-    GetPage(name: AppRoutes.login, page: () => const LogIn(), binding: LoginBinding()),
-    GetPage(name: AppRoutes.signup, page: () => const SignUp(), binding: SignUpBinding()),
-    GetPage(name: AppRoutes.otp, page: () => const OtpPage(), binding: OtpBinding()),
-    GetPage(name: AppRoutes.location, page: () => const Location(), binding: LocationBinding()),
-    GetPage(name: AppRoutes.addReport, page: () => const Addreport(), binding: AddReportBinding()),
-    GetPage(name: AppRoutes.editReport, page: () => const Editreport(), binding: EditReportBinding()),
+    GetPage(
+      name: AppRoutes.login,
+      page: () => const LogIn(),
+      binding: LoginBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.signup,
+      page: () => const SignUp(),
+      binding: SignUpBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.otp,
+      page: () => const OtpPage(),
+      binding: OtpBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.location,
+      page: () => const Location(),
+      binding: LocationBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.addReport,
+      page: () => const Addreport(),
+      binding: AddReportBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.editReport,
+      page: () => const Editreport(),
+      binding: EditReportBinding(),
+    ),
     GetPage(name: AppRoutes.myReport, page: () => const MyReport()),
+    GetPage(name: AppRoutes.alerts, page: () => const Alerts()),
+    GetPage(
+      name: AppRoutes.forgotPassword,
+      page: () => const ForgotPassword(),
+      binding: ForgotPasswordBinding(),
+    ),
   ];
 }

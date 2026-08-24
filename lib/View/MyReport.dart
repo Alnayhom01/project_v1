@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:project_v1/Routes/app_routes.dart';
+import 'package:project_v1/Widgets/app_drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
@@ -21,6 +20,7 @@ class MyReport extends StatelessWidget {
     for (final doc in snapshot.docs) {
       final data = doc.data();
       final expiry = data['expiresAt'];
+
       if (data['status'] == 'مسودة' &&
           expiry is Timestamp &&
           !expiry.toDate().isAfter(now)) {
@@ -33,6 +33,7 @@ class MyReport extends StatelessWidget {
 
     final refreshed = await ref.where('userPhone', isEqualTo: phone).get();
     final docs = refreshed.docs.toList();
+
     docs.sort((a, b) {
       final at =
           (a.data()['createdAt'] as Timestamp?)?.millisecondsSinceEpoch ?? 0;
@@ -40,6 +41,7 @@ class MyReport extends StatelessWidget {
           (b.data()['createdAt'] as Timestamp?)?.millisecondsSinceEpoch ?? 0;
       return bt.compareTo(at);
     });
+
     return docs.where((d) => d.data()['status'] == 'جديد').toList();
   }
 
@@ -47,200 +49,132 @@ class MyReport extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFDDF4FC),
-      appBar: AppBar(backgroundColor: const Color(0xff32b94b)),
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-          future: _loadReports(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting)
-              return const Center(child: CircularProgressIndicator());
-            if (snapshot.hasError)
-              return Center(
-                child: Text('تعذر تحميل البلاغات: ${snapshot.error}'),
-              );
-            final reports = snapshot.data ?? [];
-            if (reports.isEmpty)
-              return const Center(
-                child: Text(
-                  'لا توجد بلاغات مرسلة',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              );
-            return ListView.builder(
-              padding: const EdgeInsets.all(18),
-              itemCount: reports.length,
-              itemBuilder: (_, index) {
-                final data = reports[index].data();
-                final status = data['status']?.toString() ?? 'غير معروف';
-                final isNew = status == 'جديد';
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                data['reportType']?.toString() ?? 'بلاغ',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isNew
-                                    ? const Color(0xffe7f7eb)
-                                    : const Color(0xfffff4df),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                status,
-                                style: TextStyle(
-                                  color: isNew
-                                      ? const Color(0xff20883a)
-                                      : Colors.orange.shade800,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        if ((data['description']?.toString() ?? '').isNotEmpty)
-                          Text(
-                            data['description'].toString(),
-                            textAlign: TextAlign.right,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'رقم البلاغ: ${reports[index].id.substring(0, 8)}',
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        if (data['createdAt'] is Timestamp)
-                          Text(
-                            'تاريخ الإنشاء: ${_formatDate((data['createdAt'] as Timestamp).toDate())}',
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ),
-      endDrawer: Drawer(
-        width: 330,
-        backgroundColor: Colors.transparent,
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Color(0xD94A5052),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(28),
-                bottomLeft: Radius.circular(28),
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 22,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: IconButton(
-                        onPressed: Get.back,
-                        style: IconButton.styleFrom(
-                          backgroundColor: const Color(0x556B7072),
-                          fixedSize: const Size(48, 48),
-                        ),
-                        icon: const Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 27,
+
+      endDrawer: const AppDrawer(),
+
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Directionality(
+              textDirection: TextDirection.rtl,
+              child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+                future: _loadReports(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('تعذر تحميل البلاغات: ${snapshot.error}'),
+                    );
+                  }
+
+                  final reports = snapshot.data ?? [];
+
+                  if (reports.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'لا توجد بلاغات مرسلة',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 25),
-                    _drawerItem(
-                      icon: Icons.home_outlined,
-                      title: 'الرئيسية',
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.addReport);
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    _drawerItem(
-                      icon: Icons.edit_outlined,
-                      title: 'تعديل بلاغ',
-                      onTap: () {
-                        Get.toNamed(AppRoutes.editReport);
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    _drawerItem(
-                      icon: Icons.logout,
-                      title: 'تسجيل الخروج',
-                      onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.remove('isLoggedIn');
-                        await prefs.remove('userPhone');
-                        Get.offAllNamed(AppRoutes.login);
-                      },
-                    ),
-                  ],
-                ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(18, 65, 18, 18),
+                    itemCount: reports.length,
+                    itemBuilder: (_, index) {
+                      final data = reports[index].data();
+                      final status = data['status']?.toString() ?? 'غير معروف';
+                      final isNew = status == 'جديد';
+
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      data['reportType']?.toString() ?? 'بلاغ',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isNew
+                                          ? const Color(0xffe7f7eb)
+                                          : const Color(0xfffff4df),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      status,
+                                      style: TextStyle(
+                                        color: isNew
+                                            ? const Color(0xff20883a)
+                                            : Colors.orange.shade800,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              if ((data['description']?.toString() ?? '')
+                                  .isNotEmpty)
+                                Text(
+                                  data['description'].toString(),
+                                  textAlign: TextAlign.right,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'رقم البلاغ: ${reports[index].id.substring(0, 8)}',
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                              if (data['createdAt'] is Timestamp)
+                                Text(
+                                  'تاريخ الإنشاء: ${_formatDate((data['createdAt'] as Timestamp).toDate())}',
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
 
-  Widget _drawerItem({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.white, size: 30),
-            const SizedBox(width: 18),
-            Expanded(
-              child: Text(
-                title,
-                textAlign: TextAlign.right,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            Positioned(
+              top: 18,
+              right: 4,
+              child: Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.menu),
+                  iconSize: 30,
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
                 ),
               ),
             ),
@@ -251,5 +185,6 @@ class MyReport extends StatelessWidget {
   }
 
   String _formatDate(DateTime d) =>
-      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year} '
+      '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 }

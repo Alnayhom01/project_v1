@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:project_v1/Widgets/app_snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:project_v1/Model/report_model.dart';
 
@@ -65,8 +66,9 @@ class EditReportController extends GetxController {
     );
     final res = await req.send();
     final body = await res.stream.bytesToString();
-    if (res.statusCode != 200)
+    if (res.statusCode != 200) {
       throw Exception('Cloudinary upload failed: ${res.statusCode}');
+    }
     return jsonDecode(body)['secure_url'].toString();
   }
 
@@ -84,10 +86,11 @@ class EditReportController extends GetxController {
           continue;
         }
         final d = ReportModel.fromMap(m);
-        if (d.expiresAt.isAfter(now))
+        if (d.expiresAt.isAfter(now)) {
           active.add(d);
-        else
+        } else {
           await _finalizeLocal(p, m);
+        }
       }
       // إعادة القراءة لأن _finalizeLocal يحذف المسودات ويضيفها إلى Firestore
       final fresh = _read(p);
@@ -103,31 +106,13 @@ class EditReportController extends GetxController {
       if (reports.isEmpty) {
         clearSelected();
       } else {
-        if (selectedReportIndex.value >= reports.length)
+        if (selectedReportIndex.value >= reports.length) {
           selectedReportIndex.value = 0;
+        }
         selectReport(selectedReportIndex.value);
       }
     } catch (e) {
-      Get.snackbar(
-        'خطأ',
-        'تعذر تحميل البلاغات القابلة للتعديل',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'خطأ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تعذر تحميل البلاغات القابلة للتعديل',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show("خطأ", "تعذر تحميل البلاغات القابلة للتعديل");
     } finally {
       isLoading.value = false;
       update();
@@ -182,11 +167,12 @@ class EditReportController extends GetxController {
         .inSeconds
         .clamp(0, 999999)
         .toInt();
-    if (canEdit)
+    if (canEdit) {
       _timer = Timer.periodic(
         const Duration(seconds: 1),
         (_) => updateRemainingTime(),
       );
+    }
     update();
   }
 
@@ -244,49 +230,12 @@ class EditReportController extends GetxController {
 
   Future<void> updateReport() async {
     if (!canEdit || current == null) {
-      Get.snackbar(
-        'انتهت المهلة',
-        'انتهت مدة تعديل هذا البلاغ',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'انتهت المهلة',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'انتهت مدة تعديل هذا البلاغ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show("انتهت المهلة", "انتهت مدة تعديل هذا البلاغ");
+
       return;
     }
     if (selectedReportType.value == null || selectedLocation.value == null) {
-      Get.snackbar(
-        'تنبيه',
-        'يرجى إكمال بيانات البلاغ',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تنبيه',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'يرجى إكمال بيانات البلاغ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show("تنبيه", "يرجى إكمال بيانات البلاغ");
       return;
     }
     try {
@@ -321,49 +270,14 @@ class EditReportController extends GetxController {
       await _write(p, all);
       reports[selectedReportIndex.value] = updated;
       selectedImages.clear();
-      Get.snackbar(
-        'تم التعديل',
-        'تم حفظ التعديلات ويمكن تعديل البلاغ حتى انتهاء المهلة',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تم التعديل',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تم حفظ التعديلات ويمكن تعديل البلاغ حتى انتهاء المهلة',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
+      AppSnackbar.show(
+        "تم التعديل",
+        "تم حفظ التعديلات ويمكن تعديل البلاغ حتى انتهاء المهلة",
       );
 
       selectReport(selectedReportIndex.value);
     } catch (e) {
-      Get.snackbar(
-        'خطأ',
-        'تعذر تعديل البلاغ',
-        titleText: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'خطأ',
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight(200)),
-          ),
-        ),
-        messageText: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Text(
-            'تعذر تعديل البلاغ: $e',
-            textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight(150)),
-          ),
-        ),
-      );
+      AppSnackbar.show("خطأ", "تعذر تعديل البلاغ");
     } finally {
       isSaving.value = false;
       update();

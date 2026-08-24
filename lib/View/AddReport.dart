@@ -6,7 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_v1/Controller/add_report_controller.dart';
 import 'package:project_v1/Routes/app_routes.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:project_v1/Widgets/app_drawer.dart';
 
 class Addreport extends StatelessWidget {
   const Addreport({super.key});
@@ -25,102 +25,117 @@ class Addreport extends StatelessWidget {
       builder: (_) {
         return Scaffold(
           backgroundColor: background,
-          appBar: AppBar(
-            backgroundColor: green,
-            elevation: 0,
-            iconTheme: const IconThemeData(color: Colors.white),
-          ),
-          endDrawer: _buildDrawer(),
+          endDrawer: const AppDrawer(),
           body: SafeArea(
-            child: Directionality(
-              textDirection: TextDirection.rtl,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 22, 20, 28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text(
-                      'إضافة بلاغ جديد',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        color: textDark,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'أدخل بيانات البلاغ ثم أرسله',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black54,
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-
-                    _sectionTitle('نوع البلاغ'),
-                    const SizedBox(height: 8),
-                    _buildReportType(controller),
-
-                    const SizedBox(height: 22),
-
-                    _sectionTitle('موقع البلاغ'),
-                    const SizedBox(height: 8),
-                    _buildLocation(controller),
-
-                    const SizedBox(height: 22),
-
-                    _sectionTitle('الملاحظات'),
-                    const SizedBox(height: 8),
-                    _buildNotes(controller),
-
-                    const SizedBox(height: 22),
-
-                    _sectionTitle('صور البلاغ'),
-                    const SizedBox(height: 8),
-                    _buildImages(context, controller),
-
-                    const SizedBox(height: 28),
-
-                    SizedBox(
-                      height: 58,
-                      child: ElevatedButton(
-                        onPressed: controller.isLoading.value
-                            ? null
-                            : () async {
-                                await controller.submitReport();
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: green,
-                          disabledBackgroundColor: green.withOpacity(.55),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(radius),
+            child: Stack(
+              children: [
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 22, 20, 28),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'إضافة بلاغ جديد',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w800,
+                            color: textDark,
                           ),
                         ),
-                        child: controller.isLoading.value
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Text(
-                                'إبلاغ',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+
+                        const SizedBox(height: 8),
+
+                        const Text(
+                          'أدخل بيانات البلاغ ثم أرسله',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 15, color: Colors.black54),
+                        ),
+
+                        const SizedBox(height: 28),
+
+                        _sectionTitle('نوع البلاغ'),
+                        const SizedBox(height: 8),
+                        _buildReportType(controller),
+
+                        const SizedBox(height: 22),
+
+                        _sectionTitle('موقع البلاغ'),
+                        const SizedBox(height: 8),
+                        _buildLocation(controller),
+
+                        const SizedBox(height: 22),
+
+                        _sectionTitle('الملاحظات'),
+                        const SizedBox(height: 8),
+                        _buildNotes(controller),
+
+                        const SizedBox(height: 22),
+
+                        _sectionTitle('صور البلاغ'),
+                        const SizedBox(height: 8),
+                        _buildImages(context, controller),
+
+                        const SizedBox(height: 28),
+
+                        SizedBox(
+                          height: 58,
+                          child: ElevatedButton(
+                            onPressed: controller.isLoading.value
+                                ? null
+                                : () async {
+                                    await controller.submitReport();
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: green,
+                              disabledBackgroundColor: green.withValues(alpha: .55),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(radius),
                               ),
-                      ),
+                            ),
+                            child: controller.isLoading.value
+                                ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'إبلاغ',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+
+                // زر فتح الدراور
+                Positioned(
+                  top: 18,
+                  right: 4,
+                  child: Builder(
+                    builder: (context) => IconButton(
+                      icon: const Icon(Icons.menu),
+                      iconSize: 30,
+                      color: textDark,
+                      onPressed: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -155,10 +170,7 @@ class Addreport extends StatelessWidget {
           value: controller.selectedReportType,
           hint: const Text(
             'اختر نوع المشكلة',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.black54,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.black54),
           ),
           icon: const Icon(
             Icons.keyboard_arrow_down_rounded,
@@ -169,18 +181,12 @@ class Addreport extends StatelessWidget {
             DropdownMenuItem(
               alignment: Alignment.centerRight,
               value: 'حفرة في الطريق',
-              child: Text(
-                'حفرة في الطريق',
-                style: TextStyle(fontSize: 17),
-              ),
+              child: Text('حفرة في الطريق', style: TextStyle(fontSize: 17)),
             ),
             DropdownMenuItem(
               alignment: Alignment.centerRight,
               value: 'مشاكل كهربائية',
-              child: Text(
-                'مشاكل كهربائية',
-                style: TextStyle(fontSize: 17),
-              ),
+              child: Text('مشاكل كهربائية', style: TextStyle(fontSize: 17)),
             ),
             DropdownMenuItem(
               alignment: Alignment.centerRight,
@@ -246,11 +252,7 @@ class Addreport extends StatelessWidget {
                     minWidth: 38,
                     minHeight: 38,
                   ),
-                  icon: const Icon(
-                    Icons.edit_outlined,
-                    size: 21,
-                    color: green,
-                  ),
+                  icon: const Icon(Icons.edit_outlined, size: 21, color: green),
                   tooltip: 'تغيير الموقع',
                 )
               else
@@ -276,7 +278,7 @@ class Addreport extends StatelessWidget {
 
   Widget _buildNotes(AddReportController controller) {
     return Container(
-      constraints: const BoxConstraints(minHeight: 110),
+      constraints: const BoxConstraints(minHeight: 85),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(radius),
@@ -286,15 +288,12 @@ class Addreport extends StatelessWidget {
         controller: controller.notesController,
         textDirection: TextDirection.rtl,
         textAlign: TextAlign.right,
-        maxLines: 4,
-        minLines: 4,
+        maxLines: 3,
+        minLines: 3,
         keyboardType: TextInputType.text,
         decoration: const InputDecoration(
           hintText: 'يمكنك كتابة معلومات إضافية عن البلاغ',
-          hintStyle: TextStyle(
-            fontSize: 15,
-            color: Colors.black45,
-          ),
+          hintStyle: TextStyle(fontSize: 15, color: Colors.black45),
           border: InputBorder.none,
           contentPadding: EdgeInsets.all(14),
         ),
@@ -302,10 +301,7 @@ class Addreport extends StatelessWidget {
     );
   }
 
-  Widget _buildImages(
-    BuildContext context,
-    AddReportController controller,
-  ) {
+  Widget _buildImages(BuildContext context, AddReportController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -328,7 +324,7 @@ class Addreport extends StatelessWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: green.withOpacity(.10),
+                      color: green.withValues(alpha: .10),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -341,7 +337,7 @@ class Addreport extends StatelessWidget {
                   const Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'إرفاق صور',
@@ -355,10 +351,7 @@ class Addreport extends StatelessWidget {
                         Text(
                           'التقط صورة أو اختر صورًا من الاستوديو',
                           textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black45,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.black45),
                         ),
                       ],
                     ),
@@ -438,10 +431,7 @@ class Addreport extends StatelessWidget {
           Text(
             '${controller.selectedImages.length} صورة مرفقة',
             textAlign: TextAlign.right,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.black54,
-            ),
+            style: const TextStyle(fontSize: 13, color: Colors.black54),
           ),
         ],
       ],
@@ -463,9 +453,7 @@ class Addreport extends StatelessWidget {
           child: Container(
             decoration: const BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(22),
-              ),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
             ),
             child: SafeArea(
               child: Padding(
@@ -549,117 +537,5 @@ class Addreport extends StatelessWidget {
         controller.addImages(images);
       }
     }
-  }
-
-  Drawer _buildDrawer() {
-    return Drawer(
-      width: 330,
-      backgroundColor: Colors.transparent,
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xD94A5052),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(28),
-              bottomLeft: Radius.circular(28),
-            ),
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 22,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      onPressed: Get.back,
-                      style: IconButton.styleFrom(
-                        backgroundColor: const Color(0x556B7072),
-                        fixedSize: const Size(48, 48),
-                      ),
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 27,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  _drawerItem(
-                    icon: Icons.mail_outline,
-                    title: 'بلاغاتي المرسلة',
-                    onTap: () {
-                      Get.toNamed(AppRoutes.myReport);
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  _drawerItem(
-                    icon: Icons.edit_outlined,
-                    title: 'تعديل بلاغ',
-                    onTap: () {
-                      Get.toNamed(AppRoutes.editReport);
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  _drawerItem(
-                    icon: Icons.logout,
-                    title: 'تسجيل الخروج',
-                    onTap: () async {
-                      final prefs =
-                          await SharedPreferences.getInstance();
-
-                      await prefs.remove('isLoggedIn');
-                      await prefs.remove('userPhone');
-
-                      Get.offAllNamed(AppRoutes.login);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _drawerItem({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 30,
-            ),
-            const SizedBox(width: 18),
-            Expanded(
-              child: Text(
-                title,
-                textAlign: TextAlign.right,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
