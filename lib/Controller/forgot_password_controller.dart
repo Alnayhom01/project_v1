@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:project_v1/Routes/app_routes.dart';
 import 'package:project_v1/Widgets/app_snackbar.dart';
 
 class ForgotPasswordController extends GetxController {
@@ -61,7 +62,7 @@ class ForgotPasswordController extends GetxController {
       }
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/send-otp'),
+        Uri.parse('http://192.168.1.102:8080/send-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'phone': phone},
       );
@@ -94,7 +95,7 @@ class ForgotPasswordController extends GetxController {
       isLoading.value = true;
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/send-otp'),
+        Uri.parse('http://192.168.1.102:8080/send-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'phone': phone},
       );
@@ -130,7 +131,7 @@ class ForgotPasswordController extends GetxController {
       isLoading.value = true;
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/verify-otp'),
+        Uri.parse('http://192.168.1.102:8080/verify-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'phone': phone, 'otp': otp},
       );
@@ -157,11 +158,6 @@ class ForgotPasswordController extends GetxController {
       return;
     }
 
-    if (newPassword.length < 6) {
-      AppSnackbar.show('خطأ', 'كلمة السر يجب ألا تقل عن 6 أحرف');
-      return;
-    }
-
     if (newPassword != confirmPassword) {
       AppSnackbar.show('خطأ', 'كلمتا السر غير متطابقتين');
       return;
@@ -179,7 +175,7 @@ class ForgotPasswordController extends GetxController {
 
       AppSnackbar.show('تم التغيير', 'تم تغيير كلمة السر بنجاح');
 
-      Get.back();
+      Get.offAllNamed(AppRoutes.login);
     } catch (e) {
       AppSnackbar.show('خطأ', 'تعذر تحديث كلمة السر');
     } finally {

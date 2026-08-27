@@ -145,11 +145,8 @@ class MyReport extends StatelessWidget {
                                   textAlign: TextAlign.right,
                                   style: const TextStyle(fontSize: 16),
                                 ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'رقم البلاغ: ${reports[index].id.substring(0, 8)}',
-                                style: const TextStyle(color: Colors.grey),
-                              ),
+
+                              const SizedBox(height: 5),
                               if (data['createdAt'] is Timestamp)
                                 Text(
                                   'تاريخ الإنشاء: ${_formatDate((data['createdAt'] as Timestamp).toDate())}',

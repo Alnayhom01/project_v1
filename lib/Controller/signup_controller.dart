@@ -7,6 +7,7 @@ class SignUpController extends GetxController {
   final nameController = ''.obs;
   final phoneController = ''.obs;
   final passwordController = ''.obs;
+  final isLoading = false.obs;
 
   LatLng? selectedLocation;
 
@@ -38,8 +39,9 @@ class SignUpController extends GetxController {
     }
 
     try {
+      isLoading.value = true;
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/send-otp'),
+        Uri.parse('http://192.168.1.102:8080/send-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'phone': '218${phoneController.value.trim()}'},
       );
@@ -55,6 +57,8 @@ class SignUpController extends GetxController {
       AppSnackbar.show("خطأ", "تعذر الاتصال بالخادم");
 
       return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 }

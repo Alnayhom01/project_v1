@@ -28,9 +28,9 @@ class OtpController extends GetxController {
   }
 
   Future<void> resendOtp() async {
+    print('OTP BUTTON PRESSED');
     final signupController = Get.find<SignUpController>();
-    final phone = signupController.phoneController.value.trim();
-
+    final phone = '218${signupController.phoneController.value.trim()}';
     if (phone.isEmpty) {
       AppSnackbar.show('خطأ', 'رقم الهاتف غير موجود');
       return;
@@ -40,7 +40,7 @@ class OtpController extends GetxController {
       isLoading.value = true;
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/send-otp'),
+        Uri.parse('http://192.168.1.102:8080/send-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'phone': phone},
       );
@@ -65,8 +65,7 @@ class OtpController extends GetxController {
     }
 
     final signupController = Get.find<SignUpController>();
-    final phone = signupController.phoneController.value.trim();
-
+    final phone = '218${signupController.phoneController.value.trim()}';
     if (phone.isEmpty) {
       AppSnackbar.show('خطأ', 'رقم الهاتف غير موجود');
       return false;
@@ -76,7 +75,7 @@ class OtpController extends GetxController {
       isLoading.value = true;
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/verify-otp'),
+        Uri.parse('http://192.168.1.102:8080/verify-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'phone': phone, 'otp': otp},
       );

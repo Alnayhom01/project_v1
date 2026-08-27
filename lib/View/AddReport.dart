@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -78,7 +77,7 @@ class Addreport extends StatelessWidget {
                         const SizedBox(height: 8),
                         _buildImages(context, controller),
 
-                        const SizedBox(height: 28),
+                        const SizedBox(height: 45),
 
                         SizedBox(
                           height: 58,

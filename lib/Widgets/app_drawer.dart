@@ -56,7 +56,7 @@ class AppDrawer extends StatelessWidget {
                   _item(
                     Icons.mail_outline,
                     'بلاغاتي المرسلة',
-                    () => Get.offAllNamed(AppRoutes.myReport),
+                    () => Get.offNamed(AppRoutes.myReport),
                   ),
 
                   const SizedBox(height: 24),
@@ -64,14 +64,14 @@ class AppDrawer extends StatelessWidget {
                   _item(
                     Icons.edit_outlined,
                     'تعديل بلاغ',
-                    () => Get.offAllNamed(AppRoutes.editReport),
+                    () => Get.offNamed(AppRoutes.editReport),
                   ),
                   const SizedBox(height: 24),
 
                   _item(
                     Icons.notifications_outlined,
                     'تنبيهات البلدية',
-                    () => Get.toNamed(AppRoutes.alerts),
+                    () => Get.offNamed(AppRoutes.alerts),
                   ),
 
                   const SizedBox(height: 24),

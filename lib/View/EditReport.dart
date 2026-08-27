@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_v1/Controller/edit_report_controller.dart';
@@ -11,74 +12,93 @@ class Editreport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFDDF4FC),
-      endDrawer: const AppDrawer(),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            GetBuilder<EditReportController>(
-              builder: (c) {
-                if (c.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
 
-                if (c.reports.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'لا يوجد بلاغ متاح للتعديل',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+        Get.defaultDialog(
+          title: 'تأكيد الخروج',
+          middleText: 'هل أنت متأكد من الخروج من التطبيق؟',
+          backgroundColor: Color(0xFFDDF4FC),
+          textConfirm: 'نعم',
+          buttonColor: Color(0xff32b34a),
+          textCancel: 'إلغاء',
+          onConfirm: () {
+            Get.back();
+            SystemNavigator.pop();
+          },
+        );
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFDDF4FC),
+        endDrawer: const AppDrawer(),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              GetBuilder<EditReportController>(
+                builder: (c) {
+                  if (c.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (c.reports.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'لا يوجد بلاغ متاح للتعديل',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Text(
+                            'تعديل البلاغات',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          const SizedBox(height: 18),
+
+                          _selector(c),
+
+                          const SizedBox(height: 18),
+
+                          _form(context, c),
+                        ],
                       ),
                     ),
                   );
-                }
+                },
+              ),
 
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text(
-                          'تعديل البلاغات',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        _selector(c),
-
-                        const SizedBox(height: 18),
-
-                        _form(context, c),
-                      ],
-                    ),
+              Positioned(
+                top: 18,
+                right: 4,
+                child: Builder(
+                  builder: (context) => IconButton(
+                    icon: const Icon(Icons.menu),
+                    iconSize: 30,
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
                   ),
-                );
-              },
-            ),
-
-            Positioned(
-              top: 18,
-              right: 4,
-              child: Builder(
-                builder: (context) => IconButton(
-                  icon: const Icon(Icons.menu),
-                  iconSize: 30,
-                  onPressed: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

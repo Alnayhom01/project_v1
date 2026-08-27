@@ -13,7 +13,6 @@ class Alerts extends StatelessWidget {
           textDirection: TextDirection.rtl,
           child: Column(
             children: [
-              // عنوان الصفحة
               const Padding(
                 padding: EdgeInsets.only(top: 25, left: 20, right: 20),
                 child: Text(

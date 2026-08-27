@@ -280,30 +280,43 @@ class SignUp extends StatelessWidget {
 
                 const SizedBox(height: 35),
 
-                SizedBox(
-                  height: 62,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final success = await controller.sendOtp();
+                Obx(
+                  () => SizedBox(
+                    height: 62,
+                    child: ElevatedButton(
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () async {
+                              final success = await controller.sendOtp();
 
-                      if (success) {
-                        Get.toNamed(AppRoutes.otp);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff32B94B),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13),
+                              if (success) {
+                                Get.toNamed(AppRoutes.otp);
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff32B94B),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(13),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'إنشاء الحساب',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      child: controller.isLoading.value
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              'إنشاء الحساب',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),
