@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:project_v1/Controller/login_controller.dart';
 import 'package:project_v1/Routes/app_routes.dart';
@@ -9,248 +10,278 @@ class LogIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<LoginController>();
-    return Scaffold(
-      backgroundColor: const Color(0xFFDDF4FC),
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 45),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 45),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
 
-                // =========================
-                // العنوان
-                // =========================
-                const Text(
-                  'تسجيل الدخول',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+        Get.defaultDialog(
+          title: 'تأكيد الخروج',
+          content: const SizedBox(
+            width: 380,
+            child: Text(
+              'هل أنت متأكد من الخروج من التطبيق؟',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w100),
+            ),
+          ),
+
+          backgroundColor: Color(0xFFDDF4FC),
+          textConfirm: 'نعم',
+          buttonColor: Color(0xff32b34a),
+          textCancel: 'إلغاء',
+          onConfirm: () {
+            Get.back();
+            SystemNavigator.pop();
+          },
+        );
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFDDF4FC),
+        body: Directionality(
+          textDirection: TextDirection.rtl,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 45),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 45),
+
+                  // =========================
+                  // العنوان
+                  // =========================
+                  const Text(
+                    'تسجيل الدخول',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                const Text(
-                  'أدخل رقم الهاتف وكلمة السر للدخول إلى حسابك',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Color(0xff555555)),
-                ),
-
-                const SizedBox(height: 55),
-
-                // =========================
-                // رقم الهاتف
-                // =========================
-                const Text(
-                  'رقم الهاتف',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-                ),
-
-                const SizedBox(height: 8),
-
-                Container(
-                  height: 62,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(13),
-                    border: Border.all(color: const Color(0xffaaaaaa)),
+                  const Text(
+                    'أدخل رقم الهاتف وكلمة السر للدخول إلى حسابك',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Color(0xff555555)),
                   ),
-                  child: Stack(
-                    children: [
-                      TextField(
-                        keyboardType: TextInputType.phone,
-                        textDirection: TextDirection.ltr,
-                        textAlign: TextAlign.left,
-                        onChanged: (value) {
-                          controller.phoneController.value = value;
-                        },
-                        decoration: const InputDecoration(
-                          hintText: '92×××××××',
-                          hintTextDirection: TextDirection.ltr,
-                          hintStyle: TextStyle(
-                            color: Color(0xff888888),
-                            fontSize: 17,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.only(
-                            left: 105,
-                            right: 15,
-                            top: 18,
-                            bottom: 18,
-                          ),
-                        ),
-                      ),
 
-                      Positioned(
-                        left: 15,
-                        top: 0,
-                        bottom: 0,
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.phone_outlined,
-                              color: Color(0xff71858d),
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              '218',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                  const SizedBox(height: 55),
 
-                const SizedBox(height: 25),
-
-                // =========================
-                // كلمة السر
-                // =========================
-                const Text(
-                  'كلمة السر',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-                ),
-
-                const SizedBox(height: 8),
-
-                Container(
-                  height: 62,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(13),
-                    border: Border.all(color: const Color(0xffaaaaaa)),
-                  ),
-                  child: TextField(
-                    obscureText: true,
+                  // =========================
+                  // رقم الهاتف
+                  // =========================
+                  const Text(
+                    'رقم الهاتف',
                     textAlign: TextAlign.right,
-                    onChanged: (value) {
-                      controller.passwordController.value = value;
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'أدخل كلمة السر',
-                      hintStyle: TextStyle(
-                        color: Color(0xff888888),
-                        fontSize: 17,
-                      ),
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                  ),
 
-                      prefixIcon: Icon(
-                        Icons.lock_outline,
-                        color: Color(0xff71858d),
-                      ),
+                  const SizedBox(height: 8),
 
-                      border: InputBorder.none,
+                  Container(
+                    height: 62,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(color: const Color(0xffaaaaaa)),
+                    ),
+                    child: Stack(
+                      children: [
+                        TextField(
+                          keyboardType: TextInputType.phone,
+                          textDirection: TextDirection.ltr,
+                          textAlign: TextAlign.left,
+                          onChanged: (value) {
+                            controller.phoneController.value = value;
+                          },
+                          decoration: const InputDecoration(
+                            hintText: '92×××××××',
+                            hintTextDirection: TextDirection.ltr,
+                            hintStyle: TextStyle(
+                              color: Color(0xff888888),
+                              fontSize: 17,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.only(
+                              left: 105,
+                              right: 15,
+                              top: 18,
+                              bottom: 18,
+                            ),
+                          ),
+                        ),
 
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 18,
+                        Positioned(
+                          left: 15,
+                          top: 0,
+                          bottom: 0,
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.phone_outlined,
+                                color: Color(0xff71858d),
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                '218',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // =========================
+                  // كلمة السر
+                  // =========================
+                  const Text(
+                    'كلمة السر',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Container(
+                    height: 62,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(color: const Color(0xffaaaaaa)),
+                    ),
+                    child: TextField(
+                      obscureText: true,
+                      textAlign: TextAlign.right,
+                      onChanged: (value) {
+                        controller.passwordController.value = value;
+                      },
+                      decoration: const InputDecoration(
+                        hintText: 'أدخل كلمة السر',
+                        hintStyle: TextStyle(
+                          color: Color(0xff888888),
+                          fontSize: 17,
+                        ),
+
+                        prefixIcon: Icon(
+                          Icons.lock_outline,
+                          color: Color(0xff71858d),
+                        ),
+
+                        border: InputBorder.none,
+
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 18,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                // =========================
-                // نسيت كلمة السر
-                // =========================
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.forgotPassword);
-                    },
-                    child: const Text(
-                      'نسيت كلمة السر؟',
-                      style: TextStyle(
-                        color: Color(0xff279C45),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                // =========================
-                // زر تسجيل الدخول
-                // =========================
-                SizedBox(
-                  height: 62,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final controller = Get.find<LoginController>();
-
-                      final success = await controller.login();
-
-                      if (success) {
-                        Get.offAllNamed(AppRoutes.addReport);
-                      }
-                    },
-
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff32B94B),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13),
-                      ),
-                    ),
-
-                    child: const Text(
-                      'تسجيل الدخول',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 25),
-
-                // =========================
-                // إنشاء حساب
-                // =========================
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'ليس لديك حساب؟',
-                      style: TextStyle(fontSize: 16, color: Color(0xff555555)),
-                    ),
-
-                    TextButton(
+                  // =========================
+                  // نسيت كلمة السر
+                  // =========================
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
                       onPressed: () {
-                        Get.offAllNamed(AppRoutes.signup);
+                        Get.toNamed(AppRoutes.forgotPassword);
                       },
                       child: const Text(
-                        'إنشاء حساب',
+                        'نسيت كلمة السر؟',
                         style: TextStyle(
-                          fontSize: 16,
                           color: Color(0xff279C45),
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // =========================
+                  // زر تسجيل الدخول
+                  // =========================
+                  SizedBox(
+                    height: 62,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final controller = Get.find<LoginController>();
+
+                        final success = await controller.login();
+
+                        if (success) {
+                          Get.offAllNamed(AppRoutes.addReport);
+                        }
+                      },
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff32B94B),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(13),
+                        ),
+                      ),
+
+                      child: const Text(
+                        'تسجيل الدخول',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // =========================
+                  // إنشاء حساب
+                  // =========================
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'ليس لديك حساب؟',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xff555555),
+                        ),
+                      ),
+
+                      TextButton(
+                        onPressed: () {
+                          Get.offAllNamed(AppRoutes.signup);
+                        },
+                        child: const Text(
+                          'إنشاء حساب',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xff279C45),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

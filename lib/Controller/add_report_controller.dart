@@ -114,6 +114,11 @@ class AddReportController extends GetxController {
 
       return;
     }
+    if (selectedReportType == 'غيرها من المشاكل' &&
+        notesController.text.trim().isEmpty) {
+      AppSnackbar.show('تنبيه', 'يرجى تحديد نوع البلاغ في الملاحظات');
+      return;
+    }
     if (selectedImages.isEmpty) {
       AppSnackbar.show("تنبيه", "يرجى إرفاق صورة للبلاغ");
       return;
@@ -141,12 +146,12 @@ class AddReportController extends GetxController {
         longitude: selectedLocation!.longitude,
         images: paths,
         createdAt: now,
-        expiresAt: now.add(const Duration(minutes: 15)),
+        expiresAt: now.add(const Duration(minutes: 5)),
       );
       final drafts = _readDrafts(prefs);
       drafts.add({'userPhone': phone, ...draft.toMap()});
       await prefs.setString('pending_reports', jsonEncode(drafts));
-      AppSnackbar.show("تم حفظ البلاغ", "يمكنك تعديله لمدة 15 دقيقة");
+      AppSnackbar.show("تم حفظ البلاغ", "يمكنك تعديله لمدة 5 دقائق");
 
       clearReport();
     } catch (e) {

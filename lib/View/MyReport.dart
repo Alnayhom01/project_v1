@@ -1,76 +1,58 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:project_v1/Controller/my_report_controller.dart';
+import 'package:project_v1/Routes/app_routes.dart';
 import 'package:project_v1/Widgets/app_drawer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:async';
+import 'package:project_v1/Widgets/View_Widgets/MyReportWidgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyReport extends StatelessWidget {
   const MyReport({super.key});
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
-  _loadReports() async {
-    final prefs = await SharedPreferences.getInstance();
-    final phone = prefs.getString('userPhone');
-    if (phone == null || phone.isEmpty) return [];
-
-    final ref = FirebaseFirestore.instance.collection('reports');
-    final snapshot = await ref.where('userPhone', isEqualTo: phone).get();
-    final now = DateTime.now();
-
-    for (final doc in snapshot.docs) {
-      final data = doc.data();
-      final expiry = data['expiresAt'];
-
-      if (data['status'] == 'مسودة' &&
-          expiry is Timestamp &&
-          !expiry.toDate().isAfter(now)) {
-        await doc.reference.update({
-          'status': 'جديد',
-          'finalizedAt': FieldValue.serverTimestamp(),
-        });
-      }
-    }
-
-    final refreshed = await ref.where('userPhone', isEqualTo: phone).get();
-    final docs = refreshed.docs.toList();
-
-    docs.sort((a, b) {
-      final at =
-          (a.data()['createdAt'] as Timestamp?)?.millisecondsSinceEpoch ?? 0;
-      final bt =
-          (b.data()['createdAt'] as Timestamp?)?.millisecondsSinceEpoch ?? 0;
-      return bt.compareTo(at);
-    });
-
-    return docs.where((d) => d.data()['status'] == 'جديد').toList();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFDDF4FC),
+    final controller = Get.put(MyReportController());
 
-      endDrawer: const AppDrawer(),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
 
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Directionality(
-              textDirection: TextDirection.rtl,
-              child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-                future: _loadReports(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+        Get.defaultDialog(
+          title: 'تأكيد الخروج',
+          content: const SizedBox(
+            width: 380,
+            child: Text(
+              'هل أنت متأكد من الخروج من التطبيق؟',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w100),
+            ),
+          ),
+          backgroundColor: const Color(0xFFDDF4FC),
+          textConfirm: 'نعم',
+          buttonColor: const Color(0xff32b34a),
+          textCancel: 'إلغاء',
+          onConfirm: () {
+            Get.back();
+            SystemNavigator.pop();
+          },
+        );
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFDDF4FC),
+        endDrawer: const AppDrawer(),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: Obx(() {
+                  if (controller.isLoading.value) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('تعذر تحميل البلاغات: ${snapshot.error}'),
-                    );
-                  }
-
-                  final reports = snapshot.data ?? [];
+                  final reports = controller.reports;
 
                   if (reports.isEmpty) {
                     return const Center(
@@ -145,11 +127,10 @@ class MyReport extends StatelessWidget {
                                   textAlign: TextAlign.right,
                                   style: const TextStyle(fontSize: 16),
                                 ),
-
                               const SizedBox(height: 5),
                               if (data['createdAt'] is Timestamp)
                                 Text(
-                                  'تاريخ الإنشاء: ${_formatDate((data['createdAt'] as Timestamp).toDate())}',
+                                  'تاريخ الإنشاء: ${formatDate((data['createdAt'] as Timestamp).toDate())}',
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                             ],
@@ -158,30 +139,38 @@ class MyReport extends StatelessWidget {
                       );
                     },
                   );
-                },
+                }),
               ),
-            ),
 
-            Positioned(
-              top: 18,
-              right: 4,
-              child: Builder(
-                builder: (context) => IconButton(
-                  icon: const Icon(Icons.menu),
+              Positioned(
+                top: 18,
+                right: 4,
+                child: Builder(
+                  builder: (context) => IconButton(
+                    icon: const Icon(Icons.menu),
+                    iconSize: 30,
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                  ),
+                ),
+              ),
+
+              Positioned(
+                top: 18,
+                left: 4,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back),
                   iconSize: 30,
                   onPressed: () {
-                    Scaffold.of(context).openEndDrawer();
+                    Get.offAllNamed(AppRoutes.addReport);
                   },
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
-
-  String _formatDate(DateTime d) =>
-      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year} '
-      '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 }

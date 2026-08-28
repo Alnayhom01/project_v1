@@ -238,6 +238,12 @@ class EditReportController extends GetxController {
       AppSnackbar.show("تنبيه", "يرجى إكمال بيانات البلاغ");
       return;
     }
+    if (selectedReportType.value == 'غيرها من المشاكل' &&
+        notesController.text.trim().isEmpty) {
+      AppSnackbar.show('تنبيه', 'يرجى تحديد نوع البلاغ في الملاحظات');
+      return;
+    }
+
     try {
       isSaving.value = true;
       final p = await SharedPreferences.getInstance();
@@ -281,6 +287,31 @@ class EditReportController extends GetxController {
     } finally {
       isSaving.value = false;
       update();
+    }
+  }
+
+  Future<void> deleteReport() async {
+    if (current == null) return;
+
+    try {
+      final p = await SharedPreferences.getInstance();
+      final all = _read(p);
+
+      all.removeWhere((m) => m['id'] == current!.id);
+      await _write(p, all);
+
+      reports.removeAt(selectedReportIndex.value);
+
+      if (reports.isEmpty) {
+        clearSelected();
+      } else {
+        selectedReportIndex.value = 0;
+        selectReport(0);
+      }
+
+      AppSnackbar.show('تم الحذف', 'تم حذف البلاغ بنجاح');
+    } catch (e) {
+      AppSnackbar.show('خطأ', 'تعذر حذف البلاغ');
     }
   }
 

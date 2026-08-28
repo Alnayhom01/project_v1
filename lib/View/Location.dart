@@ -13,12 +13,21 @@ class Location extends StatelessWidget {
       builder: (_) => Scaffold(
         appBar: AppBar(backgroundColor: const Color(0xff32b94b)),
         body: GoogleMap(
-          initialCameraPosition: CameraPosition(target: controller.selectedLocation, zoom: 14),
+          initialCameraPosition: CameraPosition(
+            target: controller.selectedLocation,
+            zoom: 14,
+          ),
           myLocationEnabled: true,
-          myLocationButtonEnabled: true,
+          zoomControlsEnabled: false,
+          myLocationButtonEnabled: false,
           onMapCreated: controller.onMapCreated,
           onTap: controller.selectLocation,
-          markers: {Marker(markerId: const MarkerId('selected'), position: controller.selectedLocation)},
+          markers: {
+            Marker(
+              markerId: const MarkerId('selected'),
+              position: controller.selectedLocation,
+            ),
+          },
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: const Color(0xff32b94b),
@@ -30,7 +39,10 @@ class Location extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: ElevatedButton(
               onPressed: () => Get.back(result: controller.selectedLocation),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff32b94b), foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff32b94b),
+                foregroundColor: Colors.white,
+              ),
               child: const Text('تأكيد الموقع'),
             ),
           ),
