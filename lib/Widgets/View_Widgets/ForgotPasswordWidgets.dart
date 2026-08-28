@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project_v1/Controller/forgot_password_controller.dart';
+import 'package:project_v1/Widgets/AppTextField.dart';
 
 Widget phoneStep(ForgotPasswordController controller) {
   return Column(
@@ -45,7 +46,7 @@ Widget phoneStep(ForgotPasswordController controller) {
         ),
         child: Stack(
           children: [
-            TextField(
+            AppTextField(
               keyboardType: TextInputType.phone,
               textDirection: TextDirection.ltr,
               textAlign: TextAlign.left,
@@ -264,7 +265,7 @@ Widget _otpBox(ForgotPasswordController controller, int index) {
   return SizedBox(
     width: 45,
     height: 55,
-    child: TextField(
+    child: AppTextField(
       controller: controller.otpControllers[index],
       focusNode: controller.otpFocusNodes[index],
       textDirection: TextDirection.ltr,
@@ -337,7 +338,7 @@ Widget passwordStep(ForgotPasswordController controller) {
           borderRadius: BorderRadius.circular(13),
           border: Border.all(color: const Color(0xffaaaaaa)),
         ),
-        child: TextField(
+        child: AppTextField(
           controller: controller.newPasswordController,
           obscureText: true,
           textAlign: TextAlign.right,
@@ -368,7 +369,7 @@ Widget passwordStep(ForgotPasswordController controller) {
           borderRadius: BorderRadius.circular(13),
           border: Border.all(color: const Color(0xffaaaaaa)),
         ),
-        child: TextField(
+        child: AppTextField(
           controller: controller.confirmPasswordController,
           obscureText: true,
           textAlign: TextAlign.right,

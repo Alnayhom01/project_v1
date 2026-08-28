@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:project_v1/Controller/login_controller.dart';
 import 'package:project_v1/Routes/app_routes.dart';
+import 'package:project_v1/Widgets/AppTextField.dart';
 
 class LogIn extends StatelessWidget {
   const LogIn({super.key});
@@ -14,6 +15,9 @@ class LogIn extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
+        if (Get.isSnackbarOpen) {
+          Get.closeCurrentSnackbar();
+        }
 
         Get.defaultDialog(
           title: 'تأكيد الخروج',
@@ -91,7 +95,7 @@ class LogIn extends StatelessWidget {
                     ),
                     child: Stack(
                       children: [
-                        TextField(
+                        AppTextField(
                           keyboardType: TextInputType.phone,
                           textDirection: TextDirection.ltr,
                           textAlign: TextAlign.left,
@@ -161,7 +165,7 @@ class LogIn extends StatelessWidget {
                       borderRadius: BorderRadius.circular(13),
                       border: Border.all(color: const Color(0xffaaaaaa)),
                     ),
-                    child: TextField(
+                    child: AppTextField(
                       obscureText: true,
                       textAlign: TextAlign.right,
                       onChanged: (value) {

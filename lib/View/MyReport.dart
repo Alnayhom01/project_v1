@@ -18,6 +18,9 @@ class MyReport extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
+        if (Get.isSnackbarOpen) {
+          Get.closeCurrentSnackbar();
+        }
 
         Get.defaultDialog(
           title: 'تأكيد الخروج',

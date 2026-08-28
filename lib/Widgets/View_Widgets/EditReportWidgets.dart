@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_v1/Controller/edit_report_controller.dart';
 import 'package:project_v1/Routes/app_routes.dart';
+import 'package:project_v1/Widgets/AppTextField.dart';
 
 Widget selector(EditReportController c) {
   return Container(
@@ -187,7 +188,7 @@ Widget form(BuildContext context, EditReportController c) {
 
       const SizedBox(height: 8),
 
-      TextField(
+      AppTextField(
         controller: c.notesController,
         enabled: c.canEdit,
         maxLines: 4,

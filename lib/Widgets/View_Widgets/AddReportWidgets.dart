@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project_v1/Controller/add_report_controller.dart';
 import 'package:project_v1/Routes/app_routes.dart';
+import 'package:project_v1/Widgets/AppTextField.dart';
 
 const Color green = Color(0xff32b94b);
 const Color background = Color(0xFFDDF4FC);
@@ -170,7 +171,7 @@ Widget buildNotes(AddReportController controller) {
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(color: border),
     ),
-    child: TextField(
+    child: AppTextField(
       controller: controller.notesController,
       textDirection: TextDirection.rtl,
       textAlign: TextAlign.right,

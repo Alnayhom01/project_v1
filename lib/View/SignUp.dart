@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:project_v1/Controller/signup_controller.dart';
 import 'package:project_v1/Routes/app_routes.dart';
+import 'package:project_v1/Widgets/AppTextField.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({super.key});
@@ -15,6 +16,9 @@ class SignUp extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
+        if (Get.isSnackbarOpen) {
+          Get.closeCurrentSnackbar();
+        }
 
         Get.defaultDialog(
           title: 'تأكيد الخروج',
@@ -84,7 +88,7 @@ class SignUp extends StatelessWidget {
                       borderRadius: BorderRadius.circular(13),
                       border: Border.all(color: const Color(0xffaaaaaa)),
                     ),
-                    child: TextField(
+                    child: AppTextField(
                       textAlign: TextAlign.right,
                       onChanged: controller.setName,
                       decoration: const InputDecoration(
@@ -125,7 +129,7 @@ class SignUp extends StatelessWidget {
                     ),
                     child: Stack(
                       children: [
-                        TextField(
+                        AppTextField(
                           textDirection: TextDirection.ltr,
                           textAlign: TextAlign.left,
                           onChanged: controller.setPhone,
@@ -190,7 +194,7 @@ class SignUp extends StatelessWidget {
                       borderRadius: BorderRadius.circular(13),
                       border: Border.all(color: const Color(0xffaaaaaa)),
                     ),
-                    child: TextField(
+                    child: AppTextField(
                       obscureText: true,
                       textAlign: TextAlign.right,
                       onChanged: controller.setPassword,
@@ -364,7 +368,7 @@ class SignUp extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          Get.back();
+                          Get.offAllNamed(AppRoutes.login);
                         },
                         child: const Text(
                           'تسجيل دخول',
