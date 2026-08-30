@@ -351,27 +351,32 @@ Widget form(BuildContext context, EditReportController c) {
       SizedBox(
         height: 60,
         child: ElevatedButton(
-          onPressed: () {
-            Get.defaultDialog(
-              title: 'تأكيد الحذف',
-              content: const SizedBox(
-                width: 380,
-                child: Text(
-                  'هل أنت متأكد من حذف البلاغ؟',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w100),
-                ),
-              ),
-              backgroundColor: Color(0xFFDDF4FC),
-              textConfirm: 'نعم',
-              buttonColor: Color(0xff32b34a),
-              textCancel: 'إلغاء',
-              onConfirm: () {
-                Get.back();
-                c.deleteReport();
-              },
-            );
-          },
+          onPressed: c.canEdit
+              ? () {
+                  Get.defaultDialog(
+                    title: 'تأكيد الحذف',
+                    content: const SizedBox(
+                      width: 380,
+                      child: Text(
+                        'هل أنت متأكد من حذف البلاغ؟',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w100,
+                        ),
+                      ),
+                    ),
+                    backgroundColor: const Color(0xFFDDF4FC),
+                    textConfirm: 'نعم',
+                    buttonColor: const Color(0xff32b34a),
+                    textCancel: 'إلغاء',
+                    onConfirm: () {
+                      Get.back();
+                      c.deleteReport();
+                    },
+                  );
+                }
+              : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 190, 56, 74),
             foregroundColor: Colors.white,

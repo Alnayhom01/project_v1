@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:project_v1/Routes/app_pages.dart';
 import 'package:project_v1/Routes/app_routes.dart';
 import 'firebase_options.dart';
+import 'package:flutter/services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +14,13 @@ Future<void> main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Color(0xff32B94B),
+      statusBarIconBrightness: Brightness.light,
+    ),
+  );
 
   runApp(MyApp(isLoggedIn: isLoggedIn));
 }
@@ -32,6 +40,7 @@ class MyApp extends StatelessWidget {
         textSelectionTheme: const TextSelectionThemeData(
           selectionColor: Color(0x6632B94B),
           selectionHandleColor: Color(0xff32B94B),
+          cursorColor: Color(0xff32B94B),
         ),
       ),
       initialRoute: isLoggedIn ? AppRoutes.addReport : AppRoutes.login,
