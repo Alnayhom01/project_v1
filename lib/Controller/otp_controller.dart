@@ -1,12 +1,13 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_v1/Controller/signup_controller.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
-
 import 'package:project_v1/Widgets/app_snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpController extends GetxController {
   final otpControllers = List.generate(6, (_) => TextEditingController());
@@ -29,8 +30,11 @@ class OtpController extends GetxController {
 
   Future<void> resendOtp() async {
     print('OTP BUTTON PRESSED');
+
     final signupController = Get.find<SignUpController>();
-    final phone = '218${signupController.phoneController.value.trim()}';
+
+    final phone = signupController.phoneController.value.trim();
+
     if (phone.isEmpty) {
       AppSnackbar.show('خطأ', 'رقم الهاتف غير موجود');
       return;
@@ -39,14 +43,18 @@ class OtpController extends GetxController {
     try {
       isLoading.value = true;
 
+      // 218 يستخدم فقط عند إرسال الرقم إلى UltraMsg
+      final fullPhone = '218$phone';
+
       final response = await http.post(
-        Uri.parse('http://192.168.1.102:8080/send-otp'),
+        Uri.parse('https://desktop-8m6hgdo.tail5b9365.ts.net/send-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: {'phone': phone},
+        body: {'phone': fullPhone},
       );
 
       if (response.statusCode == 200) {
         clearOtp();
+
         AppSnackbar.show('تم الإرسال', 'تم إرسال رمز تحقق جديد');
       } else {
         AppSnackbar.show('خطأ', 'فشل إعادة إرسال الرمز');
@@ -65,7 +73,10 @@ class OtpController extends GetxController {
     }
 
     final signupController = Get.find<SignUpController>();
-    final phone = '218${signupController.phoneController.value.trim()}';
+
+    // الرقم المحلي بدون 218
+    final phone = signupController.phoneController.value.trim();
+
     if (phone.isEmpty) {
       AppSnackbar.show('خطأ', 'رقم الهاتف غير موجود');
       return false;
@@ -74,36 +85,55 @@ class OtpController extends GetxController {
     try {
       isLoading.value = true;
 
+      // 218 يستخدم فقط مع السيرفر وUltraMsg
+      final fullPhone = '218$phone';
+
       final response = await http.post(
-        Uri.parse('http://192.168.1.102:8080/verify-otp'),
+        Uri.parse('https://desktop-8m6hgdo.tail5b9365.ts.net/verify-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: {'phone': phone, 'otp': otp},
+        body: {'phone': fullPhone, 'otp': otp},
       );
 
       if (response.statusCode == 200) {
-        final signupController = Get.find<SignUpController>();
+        // فحص أخير لمنع إنشاء أكثر من حساب لنفس الرقم
+        final existingUser = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(phone)
+            .get();
+
+        if (existingUser.exists) {
+          AppSnackbar.show('تنبيه', 'رقم الهاتف مسجل مسبقًا');
+          return false;
+        }
 
         final passwordHash = sha256
             .convert(utf8.encode(signupController.passwordController.value))
             .toString();
 
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(signupController.phoneController.value.trim())
-            .set({
-              'name': signupController.nameController.value.trim(),
-              'phone': signupController.phoneController.value.trim(),
-              'passwordHash': passwordHash,
-              'latitude': signupController.selectedLocation!.latitude,
-              'longitude': signupController.selectedLocation!.longitude,
-              'phoneVerified': true,
-              'createdAt': FieldValue.serverTimestamp(),
-            });
+        // Firestore يحفظ الرقم المحلي بدون 218
+        await FirebaseFirestore.instance.collection('users').doc(phone).set({
+          'name': signupController.nameController.value.trim(),
+          'phone': phone,
+          'passwordHash': passwordHash,
+          'latitude': signupController.selectedLocation!.latitude,
+          'longitude': signupController.selectedLocation!.longitude,
+          'phoneVerified': true,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        // حفظ بيانات المستخدم مباشرة بعد إنشاء الحساب
+        final prefs = await SharedPreferences.getInstance();
+
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('userPhone', phone);
+
         AppSnackbar.show('تم التحقق', 'تم تأكيد رقم الهاتف بنجاح');
+
         return true;
       }
 
       AppSnackbar.show('رمز غير صحيح', 'رمز التحقق غير صحيح أو منتهي');
+
       return false;
     } catch (e) {
       AppSnackbar.show('خطأ', 'تعذر الاتصال بالخادم');
@@ -119,6 +149,7 @@ class OtpController extends GetxController {
     }
 
     otpFocusNodes.first.requestFocus();
+
     update();
   }
 

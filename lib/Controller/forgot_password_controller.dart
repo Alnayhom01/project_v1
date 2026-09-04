@@ -41,9 +41,9 @@ class ForgotPasswordController extends GetxController {
   }
 
   Future<void> sendOtp() async {
-    final phone = fullPhone;
+    final localPhone = phoneController.value.trim();
 
-    if (phone.isEmpty) {
+    if (localPhone.isEmpty) {
       AppSnackbar.show('خطأ', 'رقم الهاتف غير موجود');
       return;
     }
@@ -53,7 +53,7 @@ class ForgotPasswordController extends GetxController {
 
       final userDoc = await FirebaseFirestore.instance
           .collection('users')
-          .doc(phone)
+          .doc(localPhone)
           .get();
 
       if (!userDoc.exists) {
@@ -61,8 +61,10 @@ class ForgotPasswordController extends GetxController {
         return;
       }
 
+      final phone = '218$localPhone';
+
       final response = await http.post(
-        Uri.parse('http://192.168.1.102:8080/send-otp'),
+        Uri.parse('https://desktop-8m6hgdo.tail5b9365.ts.net/send-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'phone': phone},
       );
@@ -95,7 +97,7 @@ class ForgotPasswordController extends GetxController {
       isLoading.value = true;
 
       final response = await http.post(
-        Uri.parse('http://192.168.1.102:8080/send-otp'),
+        Uri.parse('https://desktop-8m6hgdo.tail5b9365.ts.net/send-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'phone': phone},
       );
@@ -131,7 +133,7 @@ class ForgotPasswordController extends GetxController {
       isLoading.value = true;
 
       final response = await http.post(
-        Uri.parse('http://192.168.1.102:8080/verify-otp'),
+        Uri.parse('https://desktop-8m6hgdo.tail5b9365.ts.net/verify-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'phone': phone, 'otp': otp},
       );

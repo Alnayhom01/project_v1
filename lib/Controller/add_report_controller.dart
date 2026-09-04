@@ -1,21 +1,22 @@
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:project_v1/Model/report_model.dart';
 import 'package:project_v1/Widgets/app_snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:project_v1/Model/report_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:http/http.dart' as http;
 
 class AddReportController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
     _timer = Timer.periodic(
       const Duration(seconds: 10),
       (_) => finalizeExpiredDrafts(),
@@ -24,9 +25,11 @@ class AddReportController extends GetxController {
 
   LatLng? selectedLocation;
   String? selectedReportType;
+
   final notesController = TextEditingController();
   final selectedImages = <XFile>[].obs;
   final isLoading = false.obs;
+
   Timer? _timer;
 
   void setReportType(String? v) {
@@ -56,15 +59,31 @@ class AddReportController extends GetxController {
     }
   }
 
-  Future<String> _copyImage(XFile image, String draftId, int index) async {
+  Future<String> _copyImage(
+    XFile image,
+    String draftId,
+    int index,
+  ) async {
     final dir = await getApplicationDocumentsDirectory();
-    final folder = Directory('${dir.path}/pending_reports/$draftId');
-    if (!await folder.exists()) await folder.create(recursive: true);
+
+    final folder = Directory(
+      '${dir.path}/pending_reports/$draftId',
+    );
+
+    if (!await folder.exists()) {
+      await folder.create(recursive: true);
+    }
+
     final ext = image.name.contains('.')
         ? image.name.substring(image.name.lastIndexOf('.'))
         : '.jpg';
-    final file = File('${folder.path}/image_$index$ext');
+
+    final file = File(
+      '${folder.path}/image_$index$ext',
+    );
+
     await File(image.path).copy(file.path);
+
     return file.path;
   }
 
@@ -73,17 +92,25 @@ class AddReportController extends GetxController {
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('https://api.cloudinary.com/v1_1/evoubvae/image/upload'),
+      Uri.parse(
+        'https://api.cloudinary.com/v1_1/evoubvae/image/upload',
+      ),
     );
 
     request.fields['upload_preset'] = 'ProjectV1';
 
     request.files.add(
-      http.MultipartFile.fromBytes('file', bytes, filename: image.name),
+      http.MultipartFile.fromBytes(
+        'file',
+        bytes,
+        filename: image.name,
+      ),
     );
 
     final response = await request.send();
-    final responseBody = await response.stream.bytesToString();
+
+    final responseBody =
+        await response.stream.bytesToString();
 
     if (response.statusCode != 200) {
       throw Exception(
@@ -96,48 +123,86 @@ class AddReportController extends GetxController {
 
     final imageUrl = data['secure_url'];
 
-    if (imageUrl == null || imageUrl.toString().isEmpty) {
-      throw Exception('Cloudinary did not return image URL');
+    if (imageUrl == null ||
+        imageUrl.toString().isEmpty) {
+      throw Exception(
+        'Cloudinary did not return image URL',
+      );
     }
 
     return imageUrl.toString();
   }
 
   Future<void> submitReport() async {
-    if (selectedReportType == null || selectedReportType!.trim().isEmpty) {
-      AppSnackbar.show("تنبيه", "يرجى اختيار نوع البلاغ");
-
+    if (selectedReportType == null ||
+        selectedReportType!.trim().isEmpty) {
+      AppSnackbar.show(
+        "تنبيه",
+        "يرجى اختيار نوع البلاغ",
+      );
       return;
     }
+
     if (selectedLocation == null) {
-      AppSnackbar.show("تنبيه", "يرجى اختيار موقع البلاغ");
-
+      AppSnackbar.show(
+        "تنبيه",
+        "يرجى اختيار موقع البلاغ",
+      );
       return;
     }
+
     if (selectedReportType == 'غيرها من المشاكل' &&
         notesController.text.trim().isEmpty) {
-      AppSnackbar.show('تنبيه', 'يرجى تحديد نوع البلاغ في الملاحظات');
+      AppSnackbar.show(
+        'تنبيه',
+        'يرجى تحديد نوع البلاغ في الملاحظات',
+      );
       return;
     }
+
     if (selectedImages.isEmpty) {
-      AppSnackbar.show("تنبيه", "يرجى إرفاق صورة للبلاغ");
+      AppSnackbar.show(
+        "تنبيه",
+        "يرجى إرفاق صورة للبلاغ",
+      );
       return;
     }
+
     try {
       isLoading.value = true;
-      final prefs = await SharedPreferences.getInstance();
-      final phone = prefs.getString('userPhone');
-      if (phone == null || phone.isEmpty) {
-        AppSnackbar.show("خطأ", "لم يتم العثور على بيانات المستخدم");
 
+      final prefs =
+          await SharedPreferences.getInstance();
+
+      final phone = prefs.getString('userPhone');
+
+      if (phone == null || phone.isEmpty) {
+        AppSnackbar.show(
+          "خطأ",
+          "لم يتم العثور على بيانات المستخدم",
+        );
         return;
       }
-      final id = 'local_${DateTime.now().microsecondsSinceEpoch}';
+
+      final id =
+          'local_${DateTime.now().microsecondsSinceEpoch}';
+
       final now = DateTime.now();
+
       final paths = <String>[];
-      for (var i = 0; i < selectedImages.length; i++) {
-        paths.add(await _copyImage(selectedImages[i], id, i));
+
+      for (var i = 0;
+          i < selectedImages.length;
+          i++) {
+        paths.add(
+          await _copyImage(
+            selectedImages[i],
+            id,
+            i,
+          ),
+        );
       }
+
       final draft = ReportModel(
         id: id,
         type: selectedReportType!,
@@ -146,89 +211,169 @@ class AddReportController extends GetxController {
         longitude: selectedLocation!.longitude,
         images: paths,
         createdAt: now,
-        expiresAt: now.add(const Duration(minutes: 5)),
+        expiresAt: now.add(
+          const Duration(minutes: 5),
+        ),
       );
+
       final drafts = _readDrafts(prefs);
-      drafts.add({'userPhone': phone, ...draft.toMap()});
-      await prefs.setString('pending_reports', jsonEncode(drafts));
-      AppSnackbar.show("تم حفظ البلاغ", "يمكنك تعديله لمدة 5 دقائق");
+
+      drafts.add({
+        'userPhone': phone,
+        ...draft.toMap(),
+      });
+
+      await prefs.setString(
+        'pending_reports',
+        jsonEncode(drafts),
+      );
+
+      AppSnackbar.show(
+        "تم حفظ البلاغ",
+        "يمكنك تعديله لمدة 5 دقائق",
+      );
 
       clearReport();
     } catch (e) {
-      AppSnackbar.show("خطأ", "تعذر حفظ البلاغ");
+      AppSnackbar.show(
+        "خطأ",
+        "تعذر حفظ البلاغ",
+      );
     } finally {
       isLoading.value = false;
     }
   }
 
-  List<Map<String, dynamic>> _readDrafts(SharedPreferences p) {
+  List<Map<String, dynamic>> _readDrafts(
+    SharedPreferences p,
+  ) {
     final raw = p.getString('pending_reports');
-    if (raw == null || raw.isEmpty) return [];
+
+    if (raw == null || raw.isEmpty) {
+      return [];
+    }
+
     final x = jsonDecode(raw);
-    return (x as List).map((e) => Map<String, dynamic>.from(e)).toList();
+
+    return (x as List)
+        .map(
+          (e) => Map<String, dynamic>.from(e),
+        )
+        .toList();
   }
 
   Future<void> finalizeExpiredDrafts() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs =
+          await SharedPreferences.getInstance();
+
       final phone = prefs.getString('userPhone');
-      if (phone == null || phone.isEmpty) return;
-      final raw = prefs.getString('pending_reports');
-      if (raw == null || raw.isEmpty) return;
+
+      if (phone == null || phone.isEmpty) {
+        return;
+      }
+
+      final raw =
+          prefs.getString('pending_reports');
+
+      if (raw == null || raw.isEmpty) {
+        return;
+      }
+
       final all = (jsonDecode(raw) as List)
-          .map((e) => Map<String, dynamic>.from(e))
+          .map(
+            (e) => Map<String, dynamic>.from(e),
+          )
           .toList();
+
       final keep = <Map<String, dynamic>>[];
+
       for (final m in all) {
         if (m['userPhone'] != phone) {
           keep.add(m);
           continue;
         }
+
         final d = ReportModel.fromMap(m);
+
         if (d.expiresAt.isAfter(DateTime.now())) {
           keep.add(m);
           continue;
         }
+
         try {
           final urls = <String>[];
+
           for (final path in d.images) {
             final f = File(path);
+
             if (await f.exists()) {
-              urls.add(await uploadImageToCloudinary(XFile(path)));
+              urls.add(
+                await uploadImageToCloudinary(
+                  XFile(path),
+                ),
+              );
             }
           }
-          await FirebaseFirestore.instance.collection('reports').doc(d.id).set({
+
+          await FirebaseFirestore.instance
+              .collection('reports')
+              .doc(d.id)
+              .set({
             'userPhone': phone,
             'reportType': d.type,
             'description': d.notes,
             'latitude': d.latitude,
             'longitude': d.longitude,
             'imageUrls': urls,
-            'imageUrl': urls.isNotEmpty ? urls.first : '',
-            'createdAt': Timestamp.fromDate(d.createdAt),
-            'expiresAt': Timestamp.fromDate(d.expiresAt),
+            'imageUrl':
+                urls.isNotEmpty ? urls.first : '',
+            'createdAt':
+                Timestamp.fromDate(d.createdAt),
+            'expiresAt':
+                Timestamp.fromDate(d.expiresAt),
             'status': 'جديد',
-            'finalizedAt': FieldValue.serverTimestamp(),
+            'finalizedAt':
+                FieldValue.serverTimestamp(),
           });
-          final dir = await getApplicationDocumentsDirectory();
-          final folder = Directory('${dir.path}/pending_reports/${d.id}');
-          if (await folder.exists()) await folder.delete(recursive: true);
+
+          final dir =
+              await getApplicationDocumentsDirectory();
+
+          final folder = Directory(
+            '${dir.path}/pending_reports/${d.id}',
+          );
+
+          if (await folder.exists()) {
+            await folder.delete(recursive: true);
+          }
         } catch (e) {
           keep.add(m);
-          debugPrint('FINALIZE ERROR: $e');
+
+          debugPrint(
+            'FINALIZE ERROR: $e',
+          );
         }
       }
-      await prefs.setString('pending_reports', jsonEncode(keep));
+
+      await prefs.setString(
+        'pending_reports',
+        jsonEncode(keep),
+      );
     } catch (e) {
-      debugPrint('FINALIZE DRAFTS ERROR: $e');
+      debugPrint(
+        'FINALIZE DRAFTS ERROR: $e',
+      );
     }
   }
 
   void clearReport() {
     selectedReportType = null;
     selectedLocation = null;
+
     notesController.clear();
     selectedImages.clear();
+
     update();
   }
 
@@ -236,6 +381,7 @@ class AddReportController extends GetxController {
   void onClose() {
     _timer?.cancel();
     notesController.dispose();
+
     super.onClose();
   }
 }

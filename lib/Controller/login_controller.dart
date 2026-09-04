@@ -12,7 +12,7 @@ class LoginController extends GetxController {
   final isLoading = false.obs;
 
   Future<bool> login() async {
-    final phone = '218${phoneController.value.trim()}';
+    final phone = phoneController.value.trim();
     final password = passwordController.value;
 
     if (phone.isEmpty || password.isEmpty) {
@@ -52,6 +52,7 @@ class LoginController extends GetxController {
       final prefs = await SharedPreferences.getInstance();
 
       await prefs.setBool('isLoggedIn', true);
+
       await prefs.setString('userPhone', phone);
 
       return true;

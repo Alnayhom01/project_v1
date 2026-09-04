@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -29,21 +30,35 @@ class SignUpController extends GetxController {
   }
 
   Future<bool> sendOtp() async {
+    final phone = phoneController.value.trim();
+
     if (nameController.value.trim().isEmpty ||
-        phoneController.value.trim().isEmpty ||
+        phone.isEmpty ||
         passwordController.value.isEmpty ||
         selectedLocation == null) {
       AppSnackbar.show("تنبيه", "أكمل جميع البيانات");
-
       return false;
     }
 
     try {
       isLoading.value = true;
+
+      final existingUser = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(phone)
+          .get();
+
+      if (existingUser.exists) {
+        AppSnackbar.show("تنبيه", "رقم الهاتف مسجل مسبقًا");
+        return false;
+      }
+
+      final fullPhone = '218$phone';
+
       final response = await http.post(
-        Uri.parse('http://192.168.1.102:8080/send-otp'),
+        Uri.parse('https://desktop-8m6hgdo.tail5b9365.ts.net/send-otp'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: {'phone': '218${phoneController.value.trim()}'},
+        body: {'phone': fullPhone},
       );
 
       if (response.statusCode == 200) {
@@ -51,11 +66,9 @@ class SignUpController extends GetxController {
       }
 
       AppSnackbar.show("خطأ", "فشل إرسال رمز التحقق");
-
       return false;
     } catch (e) {
       AppSnackbar.show("خطأ", "تعذر الاتصال بالخادم");
-
       return false;
     } finally {
       isLoading.value = false;
